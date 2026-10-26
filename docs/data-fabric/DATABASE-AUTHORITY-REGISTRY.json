@@ -1,0 +1,106 @@
+{
+  "generatedAt": "2026-08-14T12:50:28.3061838-05:00",
+  "rule": "ONE_PROVEN_AUTHORITY_PER_DOMAIN",
+  "authorityAssignmentComplete": false,
+  "databases": [
+    {
+      "name": "leeway-kernel",
+      "technology": "sqlite",
+      "owner": "Runtime Fabric / Runtime Kernel",
+      "authorityCandidate": "RUNTIME_KERNEL_STATE",
+      "authorityStatus": "CANDIDATE_NOT_YET_PROVEN",
+      "federation": "CONTROLLED_ADAPTER_ONLY"
+    },
+    {
+      "name": "publisher",
+      "technology": "sqlite",
+      "owner": "Runtime Fabric / Master Publisher",
+      "authorityCandidate": "MASTER_PUBLISHER_STATE",
+      "authorityStatus": "CANDIDATE_NOT_YET_PROVEN",
+      "federation": "CONTROLLED_ADAPTER_ONLY"
+    },
+    {
+      "name": "digital-brain",
+      "technology": "sqlite",
+      "owner": "Digital Brain",
+      "authorityCandidate": "DIGITAL_BRAIN_STATE_OR_PROJECTION",
+      "authorityStatus": "CANDIDATE_NOT_YET_PROVEN",
+      "federation": "CONTROLLED_ADAPTER_ONLY"
+    },
+    {
+      "name": "slang",
+      "technology": "sqlite",
+      "owner": "LeeWay Brain / Language",
+      "authorityCandidate": "LANGUAGE_REFERENCE_DATA",
+      "authorityStatus": "CANDIDATE_NOT_YET_PROVEN",
+      "federation": "CONTROLLED_ADAPTER_ONLY"
+    },
+    {
+      "name": "bitwarden-vault",
+      "technology": "sqlite_or_bitwarden_file_db",
+      "owner": "Bitwarden Lite",
+      "authorityCandidate": "SECRET_VAULT",
+      "authorityStatus": "APPLICATION_OWNED",
+      "federation": "PROHIBITED_GENERAL_SQL"
+    },
+    {
+      "name": "n8n",
+      "technology": "sqlite",
+      "owner": "n8n",
+      "authorityCandidate": "AUTOMATION_WORKFLOW_STATE",
+      "authorityStatus": "APPLICATION_OWNED",
+      "federation": "SERVICE_API_PREFERRED"
+    },
+    {
+      "name": "forgejo",
+      "technology": "sqlite3",
+      "owner": "Forgejo",
+      "databaseName": "gitea",
+      "observedPath": "/data/gitea/gitea.db",
+      "authorityCandidate": "SOURCE_CONTROL_METADATA",
+      "authorityStatus": "APPLICATION_OWNED",
+      "federation": "SERVICE_API_PREFERRED"
+    },
+    {
+      "name": "ccnet_db",
+      "technology": "mariadb",
+      "owner": "Seafile",
+      "authorityCandidate": "FILE_COLLAB_IDENTITY_CONFIG",
+      "authorityStatus": "APPLICATION_OWNED",
+      "federation": "READ_ONLY_TRINO_CANDIDATE"
+    },
+    {
+      "name": "seafile_db",
+      "technology": "mariadb",
+      "owner": "Seafile",
+      "authorityCandidate": "FILE_REPOSITORY_METADATA",
+      "authorityStatus": "APPLICATION_OWNED",
+      "federation": "READ_ONLY_TRINO_CANDIDATE"
+    },
+    {
+      "name": "seahub_db",
+      "technology": "mariadb",
+      "owner": "Seafile",
+      "authorityCandidate": "FILE_COLLAB_APPLICATION_METADATA",
+      "authorityStatus": "APPLICATION_OWNED",
+      "federation": "READ_ONLY_TRINO_CANDIDATE"
+    },
+    {
+      "name": "LeeWayTransitHub",
+      "technology": "sql_server",
+      "owner": "LeeWay Enterprise Transit Hub",
+      "authorityCandidate": "ENTERPRISE_TRANSIT_HUB_DATA",
+      "authorityStatus": "APPLICATION_OWNED",
+      "federation": "READ_ONLY_TRINO_CANDIDATE"
+    }
+  ],
+  "unprovenCoreDomains": [
+    "LIVE_INTERACTION_CONVERSATION",
+    "AGENT_LEE_MEMORY",
+    "PERSONAL_LEARNING",
+    "ECOSYSTEM_LEARNING",
+    "HARNESS_MISSION_TASK_STATE",
+    "RECEIPT_LEDGER_PROVENANCE",
+    "FORMULA_PASSPORT_HISTORY"
+  ]
+}
