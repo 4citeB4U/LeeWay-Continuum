@@ -1,24 +1,25 @@
 <!--
 LEEWAY HEADER — DO NOT REMOVE
 REGION: LEEWAY.CONTINUUM.REPOSITORY
-TAG: LEEWAY.CONTINUUM.CANONICAL.REPOSITORY.SEED.V1
+TAG: LEEWAY.CONTINUUM.CANONICAL.REPOSITORY.V1
 WHO: LeeWay Industries / Leonard Jerome Lee
 WHAT: Dedicated source home for existing Continuum authority, original UI and scoped adapters.
 WHEN: 2026-10-26
 WHERE: LeeWay-Continuum/README.md
 WHY: Independent lifecycle without duplicating production data or identity.
 HOW: Preserve source; inject original host; qualify optional engines and providers.
-AUTHORITY: SOURCE EXTRACTION SEED ONLY; no deployment, grants or live data migration.
+AUTHORITY: SOURCE REPOSITORY ONLY; no production deployment, grants or live data migration.
 LICENSE: MIT for new files; original module licenses and vendor notices are preserved.
 -->
 # LeeWay Continuum
 
 **One canonical Continuum authority, multiple replaceable databases and optional storage compartments.**
 
-This source package is the migration seed for the planned private GitHub repository:
-https://github.com/4citeB4U/LeeWay-Continuum
+**Canonical independent source repository:** https://github.com/4citeB4U/LeeWay-Continuum
 
-**STATUS: ISOLATED SOURCE STAGING ONLY. NOT LIVE PRODUCTION.**
+**STATUS: PUBLISHED SOURCE REPOSITORY. LIVE PRODUCTION INTEGRATION NOT YET QUALIFIED.**
+
+The GitHub repository is currently **PUBLIC** by the repository owner's choice. It contains source and documentation only; never publish live databases, credentials, owner records, Pocket ID identity stores, or encrypted archives that carry private identity data without an explicit access review.
 
 The original owner storage reported at 127.0.0.1:8890 remains unchanged. No live records,
 identity keys, Receipt Ledger, Learning Ledger, or Veritas authorities have been moved.
@@ -38,7 +39,7 @@ They must be reconciled by source pin and trusted owner access before activation
 
 ## Four database technologies
 
-| Engine | Role | Status of this extracted package |
+| Engine | Role | Actual connection state (source repository) |
 |---|---|---|
 | SQLite | Canonical durable records; original owner storage | Existing runtime reported; code adapter is injected, NOT a new DB |
 | DuckDB | Derived analytics and query projections | Adapter source only, no qualified database connection |
@@ -64,9 +65,13 @@ No credentials, plaintext backups or private source content belong in GitHub.
 - src/adapters/engine-adapters.mjs — four owner-governed injected database engine roles
 - src/storage/cloud-archives.mjs — encryption-required R2/OCI archived chunks and hash readback
 - src/integration/canonical-host-binding.mjs — same-instance provider/owner source integration
+- src/integration/ecosystem-consumer.mjs — scoped clients for the remaining LeeWay services
+- compat/device-bridge/ — original Device Bridge binder and Pocket ID snapshot adapter
 - src/capacity/continuum-capacity-plan.mjs — measured pressure, proposal only
 - config/storage-topology.candidate.json — truthful unbound and optional states
 - docs/SOURCE-PROVENANCE.md — original Git blob identity inventory
+- docs/storage/ — merged four-engine architecture and production-release acceptance requirements
+- docs/data-fabric/ — original database authority and federation contracts (reference copies)
 - docs/EXTRACTION-AND-CUTOVER.md — transfer, validation, rollback and adoption process
 
 ## Synthetic test commands
@@ -81,7 +86,7 @@ independent signer/Veritas proof, or two-device replication.
 
 ## Authority boundaries
 
-- Do not create a second canonical Continuum when publishing this repository.
+- Do not create a second canonical Continuum when connecting this repository.
 - Do not commit databases, WAL files, secrets, owner receipts or backups.
 - Do not treat visual honeycomb occupancy as provisioned database shards.
 - LDWMD retains separate working memory and GPU/VRAM lease authority.
