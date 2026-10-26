@@ -1,0 +1,48 @@
+# LEEWAY HEADER — DO NOT REMOVE
+# REGION: LEEWAY.CONTINUUM.SOURCE_PROTECTION
+# TAG: LEEWAY.CONTINUUM.DATA_NEVER_IN_GIT
+# WHO: LeeWay Industries
+# WHAT: Prevent uploading private, live data, secrets and mutable storage.
+# WHEN: 2026-10-26
+# WHERE: LeeWay-Continuum/.gitignore
+# WHY: Source repo must not become a second owner database.
+# HOW: Ignore sensitive runtime artifacts; audited sample fixtures only.
+# AUTHORITY: SOURCE_ONLY
+# LICENSE: MIT
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+*.sqlite-wal
+*.sqlite-shm
+*.db-journal
+*.sqlite-journal
+*.duckdb
+*.duckdb.wal
+*.pouch
+*.pem
+*.key
+*.p12
+*.pfx
+*.secret
+*.token
+*.bak
+*.backup
+*.dump
+*.jsonl
+*.zip
+*.tar
+*.tgz
+runtime-data/
+backups/
+private/
+secrets/
+credentials/
+node_modules/
+dist/
+coverage/
+.DS_Store

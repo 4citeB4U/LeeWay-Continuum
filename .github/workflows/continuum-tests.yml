@@ -1,0 +1,45 @@
+# LEEWAY HEADER — DO NOT REMOVE
+# REGION: LEEWAY.CONTINUUM.CI
+# TAG: LEEWAY.CONTINUUM.SOURCE_CI.V1
+# WHO: LeeWay Industries
+# WHAT: Safe source-only tests for original UI and adapter contracts.
+# WHEN: 2026-10-26
+# WHERE: .github/workflows/continuum-tests.yml
+# WHY: Catch source breakage without reading any private owner data.
+# HOW: Node fixture tests and syntax checks on three operating systems.
+# AUTHORITY: CI_ONLY. NOT LIVE PRODUCTION.
+# LICENSE: MIT
+name: Continuum source-only tests
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run check:syntax
+      - run: npm test
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run check:syntax
+      - run: npm test
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run check:syntax
+      - run: npm test

@@ -1,0 +1,89 @@
+{
+  "schema": "leeway.continuum.storage-topology.candidate.v1",
+  "generatedAt": "2026-10-26",
+  "status": "CANDIDATE_SOURCE_ONLY",
+  "canonicalAuthority": {
+    "component": "LeeWay Continuum",
+    "scope": "OWNER_AND_BODY",
+    "liveBinding": "NOT_PROBED",
+    "originalRuntimePort": "127.0.0.1:8890",
+    "verifiedSnapshot": "USER_PROVIDED_REPORT_ONLY"
+  },
+  "databases": [
+    {
+      "id": "sqlite",
+      "role": "CANONICAL_RECORDS",
+      "status": "EXISTING_LOCAL_PROVIDER_REPORTED",
+      "module": "src/adapters/engine-adapters.mjs",
+      "condition": "ORIGINAL_SERVICE_AUTHORIZATION_AND_READBACK"
+    },
+    {
+      "id": "duckdb",
+      "role": "DERIVED_ANALYTICS",
+      "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
+      "module": "src/adapters/engine-adapters.mjs"
+    },
+    {
+      "id": "pouchdb",
+      "role": "OFFLINE_REPLICA",
+      "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
+      "module": "src/adapters/engine-adapters.mjs"
+    },
+    {
+      "id": "electric_postgresql",
+      "role": "OPTIONAL_SYNC_TRANSPORT",
+      "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
+      "module": "src/adapters/engine-adapters.mjs"
+    }
+  ],
+  "storageCompartments": [
+    {
+      "id": "cloudflare-r2",
+      "role": "OPTIONAL_ENCRYPTED_OBJECT_BACKUP",
+      "status": "CREDENTIALS_AND_BUCKET_UNBOUND",
+      "module": "src/storage/cloud-archives.mjs"
+    },
+    {
+      "id": "oracle-oci-object",
+      "role": "OPTIONAL_ENCRYPTED_OBJECT_BACKUP",
+      "status": "CREDENTIALS_AND_BUCKET_UNBOUND",
+      "module": "src/storage/cloud-archives.mjs"
+    },
+    {
+      "id": "github-release",
+      "role": "RELEASE_PACKAGES_AND_ENCRYPTED_RELEASE_EVIDENCE_ONLY",
+      "status": "RELEASE_MANIFEST_ONLY",
+      "module": "src/storage/cloud-archives.mjs"
+    }
+  ],
+  "logicalCells": [
+    {
+      "id": "runtime-state",
+      "state": "RESOURCE_UNVERIFIED"
+    },
+    {
+      "id": "evidence-vault",
+      "state": "RESOURCE_UNVERIFIED"
+    },
+    {
+      "id": "memory",
+      "state": "RESOURCE_UNVERIFIED"
+    },
+    {
+      "id": "learning",
+      "state": "RESOURCE_UNVERIFIED"
+    }
+  ],
+  "capacity": {
+    "planner": "src/capacity/continuum-capacity-plan.mjs",
+    "executionAuthorized": false,
+    "shardProvisioner": "UNBOUND",
+    "multiDeviceReplication": "UNBOUND",
+    "preventSplitBrain": true
+  },
+  "migration": {
+    "copiesLiveDatabase": false,
+    "createsRuntimeDatabase": false,
+    "mutatesProtectedLedger": false
+  }
+}

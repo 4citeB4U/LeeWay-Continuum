@@ -1,0 +1,16 @@
+{
+  "name": "@leeway/continuum",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Source-only extraction seed for one canonical owner-governed LeeWay Continuum with original UI and injected database/cloud adapters",
+  "scripts": {
+    "test": "node --test src/adapters/tests/engine-adapters.test.mjs src/storage/tests/cloud-archives.test.mjs src/integration/tests/canonical-host-binding.test.mjs src/integration/tests/ecosystem-consumer.test.mjs src/capacity/tests/continuum-capacity-plan.test.mjs ui/original/tests/continuum-depth.test.mjs ui/original/tests/continuum-focus-layout.test.mjs",
+    "check:syntax": "node --check src/adapters/engine-adapters.mjs && node --check src/storage/cloud-archives.mjs && node --check src/integration/canonical-host-binding.mjs && node --check src/capacity/continuum-capacity-plan.mjs && node --check ui/original/continuum-app.mjs && node --check ui/original/continuum-sphere.mjs && node --check ui/original/continuum-depth.mjs && node --check ui/original/continuum-media.mjs && node --check src/integration/ecosystem-consumer.mjs"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/4citeB4U/LeeWay-Continuum"
+}

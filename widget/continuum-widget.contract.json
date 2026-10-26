@@ -1,0 +1,39 @@
+{
+  "schema": "leeway.floating-widget.capability.v1",
+  "owner": "LeeWay Industries",
+  "uiContract": "LFW-v1.0",
+  "widgetId": "leeway.widget.continuum",
+  "formProfile": "SPATIAL",
+  "capabilityRef": "leeway.continuum",
+  "approvedContentPath": "ui/original/index.html",
+  "originalSpherePath": "ui/original/continuum-sphere.mjs",
+  "widgetHost": "REUSE_EXISTING_AGENT_LEE_GOLDEN_PACKAGE",
+  "sameInstanceOnFocus": true,
+  "nativeHosts": [
+    "windows",
+    "android",
+    "ios",
+    "macos",
+    "linux"
+  ],
+  "geometry": {
+    "movement": "HOST_CONTROLLED",
+    "resize": "WHOLE_WIDGET_PROPORTIONAL",
+    "rotation": "PRESERVE_SOURCE",
+    "wheel": "HOST_CONTROLLED",
+    "rail": "EXISTING_HOST_CONTROL_RAIL",
+    "honeycomb": "UNCHANGED_ORIGINAL"
+  },
+  "security": {
+    "dataOrigin": "SAME_ORIGIN_OWNER_SCOPED_API",
+    "governedWrites": true,
+    "noEmbeddedSecondAuthority": true
+  },
+  "qualification": {
+    "source": "MIRRORED_SOURCE",
+    "nativeHosts": "NOT_REQUALIFIED",
+    "runtime": "NOT_REBOUND",
+    "production": "NOT_ACCEPTED"
+  },
+  "reference": "https://github.com/4citeB4U/LeeWay-Agent-Skills/blob/main/skills/ui/leeway-governed-floating-widget/SKILL.md"
+}
