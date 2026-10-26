@@ -15,7 +15,9 @@ LICENSE: Original module licenses remain in effect.
 
 Source repository: 4citeB4U/Leeway-Runtime-Fabric
 Source ref: main on October 26, 2026
-Staged under continuum-repository/ (strip this prefix in the future standalone repo).
+Original staging prefix: continuum-repository/ in Runtime Fabric PR #91.
+Published at repository root on LeeWay-Continuum main, initial source commit ddf0c922319bd58980902478c2347d61c879ead4.
+The published initial root Git tree is exactly the original staging subtree: 6300b7eb2b9b2769bd489e70bd5e84437ee3a952.
 
 **The following are Git blob IDs, not independent SHA-256 production attestations.**
 Original HTML, CSS, Javascript and vendor files were copied without UI redesign.
