@@ -28,29 +28,25 @@ Never reset the owner SQLite, WAL, Brain DB, current receipts, Pocket ID or runt
    record exact SHA-256 and restorability to a separate test host.
 4. Record original source/version, UI source hashes and native window geometry.
 
-## 1. GitHub source-only extraction
+## 1. GitHub source repository — PUBLISHED
 
-The migration source is currently isolated at:
-4citeB4U/Leeway-Runtime-Fabric branch codex/continuum-repository-seed-20261026
-under directory continuum-repository/.
+**Completed October 26, 2026.** The owner created `4citeB4U/LeeWay-Continuum`.
+The previously staged `continuum-repository/` source tree was imported directly onto
+`main` using GitHub Git objects, preserving the entire original source Git tree.
 
-Repository creation is separate and must be performed by an authenticated
-GitHub owner; this connector cannot create a repository in this session.
-Create ONE new PRIVATE empty 4citeB4U/LeeWay-Continuum repository.
+- First full-source commit: `ddf0c922319bd58980902478c2347d61c879ead4`.
+- Exact initial source tree SHA: `6300b7eb2b9b2769bd489e70bd5e84437ee3a952`.
+- Original source staging location: `4citeB4U/Leeway-Runtime-Fabric`,
+  branch `codex/continuum-repository-seed-20261026`, subdirectory
+  `continuum-repository/`; GitHub PR #91.
+- Repository visibility: **PUBLIC**. Source-only review required; keep all owner
+  records, encrypted archives containing private information, keys, ledger state,
+  Pocket ID databases and live SQLite/DuckDB files out of Git.
+- Readme and storage/authority reference documents have since been updated in the
+  new repository. The original UI and compatibility code remains source-identical.
 
-In a clean temporary clone using an authenticated maintainer Git client:
-
-    git fetch origin codex/continuum-repository-seed-20261026
-    git checkout --detach FETCH_HEAD
-    git subtree split --prefix=continuum-repository -b continuum-root
-    git remote add continuum git@github.com:4citeB4U/LeeWay-Continuum.git
-    git push continuum continuum-root:main
-
-Use a disposable clone; do not run destructive cleanup or history rewrite
-in the owner PC's dirty runtime checkout. The subtree command publishes
-only staged source under continuum-repository, not the rest of Runtime Fabric.
-Before publishing, verify actual GitHub destination/permissions and ensure
-private databases or credentials are absent.
+The independent GitHub repository is now the target for Continuum package changes.
+**This is not a live database migration, a producer cutover, or a production release.**
 
 ## 2. Native/widget UI parity
 
