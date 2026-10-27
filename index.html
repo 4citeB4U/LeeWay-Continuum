@@ -1,0 +1,32 @@
+<!doctype html>
+<!--
+LEEWAY HEADER — DO NOT REMOVE
+REGION: LEEWAY.CONTINUUM.PAGES.ENTRY
+TAG: LEEWAY.CONTINUUM.ORIGINAL_UI_ENTRY.V1
+WHO: LeeWay Industries / Leonard Jerome Lee
+WHAT: GitHub Pages entry to the preserved original Continuum UI.
+WHEN: 2026-10-27
+WHERE: LeeWay-Continuum/index.html
+WHY: Pages serves repository root while the verified original UI lives at ui/original/index.html.
+HOW: Relative same-site redirect, preserving hash and query; no cloned widget, fake records, or extra data authority.
+AUTHORITY: PUBLIC STATIC UI ONLY. Does not expose owner databases or qualify the native host.
+LICENSE: MIT
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="refresh" content="0; url=./ui/original/index.html">
+  <title>LeeWay Continuum — Original Interface</title>
+  <link rel="canonical" href="./ui/original/index.html">
+  <script>
+    // Preserve deep-link fragments and query parameters; the UI remains byte-original.
+    location.replace(new URL('./ui/original/index.html' + location.search + location.hash, location.href).href);
+  </script>
+</head>
+<body>
+  <p>Opening the <a href="./ui/original/index.html">original LeeWay Continuum interface</a>.</p>
+  <p>GitHub Pages is a public static viewer; authenticated owner records require the separate governed Continuum service.</p>
+</body>
+</html>
