@@ -5,9 +5,9 @@
 // WHAT: Verify root Pages entry and unchanged original Continuum source blobs.
 // WHEN: 2026-10-27
 // WHERE: tests/continuum-pages-entry.test.mjs
-// WHY: Prevent a passing Pages deployment that fails to show the original widget UI.
-// HOW: Inspect exact entry route, linked assets, and original recorded Git blob identities.
-// AUTHORITY: SOURCE_TEST_ONLY; no native host, backend or Veritas claim.
+// WHY: Prevent Pages success from masking missing UI assets or changed original source.
+// HOW: Check entry route, linked assets, and exact committed Git blob identities.
+// AUTHORITY: SOURCE_TEST_ONLY; not a native host, backend, or Veritas test.
 // LICENSE: MIT
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,6 +15,7 @@ import {readFileSync,existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const load=p=>readFileSync(resolve(root,p));
 const originalBlobs={
@@ -27,23 +28,27 @@ const originalBlobs={
   'ui/original/mammoth.browser.min.js':'650e8a68cf239dfbbbd9620e5c4d56baafeb0552',
   'ui/original/purify.min.js':'00742c47118a703f414f6a116ddff07965d8e59e'
 };
+
 test('Pages root routes to the original UI without a replacement widget',()=>{
   const entry=load('index.html').toString('utf8');
   assert.match(entry,/url=\.\/ui\/original\/index\.html/);
   assert.match(entry,/location\.replace\(new URL\('\.\/ui\/original\/index\.html'/);
   assert.doesNotMatch(entry,/fetch\s*\(/);
 });
+
 test('Original UI includes all its source-local asset references',()=>{
   const html=load('ui/original/index.html').toString('utf8');
-  for(const asset of ['continuum.css','continuum-app.mjs','mammoth.browser.min.js','purify.min.js']) {
-    assert.ok(html.includes('./'+asset),'missing original HTML link to '+asset);
+  for(const asset of ['continuum.css','continuum-app.mjs','mammoth.browser.min.js','purify.min.js']){
+    assert.ok(html.includes('./'+asset),'missing HTML reference '+asset);
     assert.ok(existsSync(resolve(root,'ui/original',asset)),'missing original asset '+asset);
   }
 });
-test('Original Continuum UI files exactly match the source provenance Git blobs',()=>{
-  for(const [path,expected] of Object.entries(originalB    assert.ok(existsSync(resolve(root,path)),path+' source file absent');
-    // Git checkout may normalize LF to CRLF on Windows. Use committed Git object identity.
+
+test('Committed original UI Git blobs match source provenance on every platform',()=>{
+  for(const [path,expected] of Object.entries(originalBlobs)){
+    assert.ok(existsSync(resolve(root,path)),path+' missing from worktree');
+    // Check the committed object to avoid Git's LF/CRLF checkout conversion on Windows.
     const actual=execFileSync('git',['rev-parse','HEAD:'+path],{cwd:root,encoding:'utf8'}).trim();
-    assert.equal(actual,expected,path+' source Git blob changed');hanged');
+    assert.equal(actual,expected,path+' committed source blob changed');
   }
 });
