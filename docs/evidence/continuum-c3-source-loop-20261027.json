@@ -1,0 +1,298 @@
+{
+  "fileIdentity": {
+    "region": "LEEWAY.CONTINUUM.C3.ENGINEERING.EVIDENCE",
+    "tag": "LEEWAY.CONTINUUM.C3.SOURCE_LOOP_RETROSPECTIVE.V1",
+    "who": "LeeWay Industries / creator-authorized engineering",
+    "what": "Inspectable 10-stage source repair and failure-learning candidate record",
+    "when": "2026-10-27",
+    "where": "docs/evidence/continuum-c3-source-loop-20261027.json",
+    "why": "Source/CI completion and failures were not correlated with the owning C3 mission and independent learning admission boundaries",
+    "how": "Read-only GitHub commit, issue, PR, workflow and diagnostic-log reconstruction; fail-closed candidate recording",
+    "authority": "RETROSPECTIVE_SOURCE_EVIDENCE_ONLY",
+    "license": "MIT"
+  },
+  "schema": "leeway.continuum.engineering-source-evidence.v1",
+  "recordType": "RETROSPECTIVE_SOURCE_EVIDENCE_NOT_CANONICAL_RECEIPT",
+  "project": "LeeWay Continuum",
+  "repository": "4citeB4U/LeeWay-Continuum",
+  "missionIssue": "https://github.com/4citeB4U/LeeWay-Continuum/issues/1",
+  "checkpoint": {
+    "program": "C3",
+    "gate": "ORIGINAL_CANONICAL_OWNER_SERVICE_BINDING_AND_INDEPENDENT_VERITAS",
+    "acceptance": "ONE_LIVE_GOVERNED_CONTINUUM_READ_WRITE_READBACK_AND_PRE_POST_RECEIPT_LEARNING_CHAIN",
+    "state": "BLOCKED"
+  },
+  "scope": {
+    "objective": "Expose original Continuum UI through GitHub Pages and pin missing original-host source migration gate",
+    "originalSourceCommit": "bc1364c9bb03c86a1bcf0d25d4f5794429a4e671",
+    "pagesRepairCommit": "b65a5765bda76f9f80c2950283daaf299f261f3f",
+    "sourceCompletionMerge": "f8f76531b7b8eba8e1e2cb88c117419f8fb55eb1",
+    "productionChange": false,
+    "ownerDataMutated": false,
+    "originalWidgetBytesChanged": false
+  },
+  "evidence": [
+    {
+      "id": "E01",
+      "kind": "COMMIT",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/commit/b65a5765bda76f9f80c2950283daaf299f261f3f",
+      "claim": "Root Pages entry links to preserved original UI"
+    },
+    {
+      "id": "E02",
+      "kind": "PR",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/pull/2",
+      "claim": "Scoped source completion inventory, read-only PowerShell inspector, original source UI blob parity test"
+    },
+    {
+      "id": "E03",
+      "kind": "CI_FAILURE",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/actions/runs/40459278463",
+      "claim": "Windows run 55/56 tests passed; original HTML worktree Git blob mismatch failed"
+    },
+    {
+      "id": "E04",
+      "kind": "CI_FAILURE",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/actions/runs/40459455286",
+      "claim": "Malformed test source failed import/syntax on Windows/Linux/macOS"
+    },
+    {
+      "id": "E05",
+      "kind": "CI_PASS",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/actions/runs/40459611163",
+      "claim": "Corrected test passed npm tests and syntax on Linux/macOS/Windows"
+    },
+    {
+      "id": "E06",
+      "kind": "CI_PASS",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/actions/runs/40459744328",
+      "claim": "Merged main commit source-only tests passed on Linux/macOS/Windows"
+    },
+    {
+      "id": "E07",
+      "kind": "DEPLOYMENT_WORKFLOW_PASS",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/actions/runs/40459743534",
+      "claim": "GitHub Pages build/deploy workflow succeeded; not browser visual or live data evidence"
+    },
+    {
+      "id": "E08",
+      "kind": "SOURCE_DOCUMENT",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/blob/f8f76531b7b8eba8e1e2cb88c117419f8fb55eb1/docs/FULL-SOURCE-COMPLETION-GATE.md",
+      "claim": "Owner-local service and native device/Veritas qualification explicitly blocked"
+    },
+    {
+      "id": "E09",
+      "kind": "SOURCE_CODE",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/blob/f8f76531b7b8eba8e1e2cb88c117419f8fb55eb1/tests/continuum-pages-entry.test.mjs",
+      "claim": "Test asserts Pages route, original UI assets and unchanged committed Git blobs"
+    },
+    {
+      "id": "E10",
+      "kind": "ISSUE",
+      "url": "https://github.com/4citeB4U/LeeWay-Continuum/issues/1",
+      "claim": "Canonical C3 mission, outstanding gates and review chronology"
+    }
+  ],
+  "phases": [
+    {
+      "step": 1,
+      "name": "Investigate",
+      "status": "VERIFIED",
+      "evidenceIds": [
+        "E08",
+        "E10"
+      ],
+      "finding": "Inspected existing Continuum source, GitHub Pages root and original ui/original/index.html; main was missing root index."
+    },
+    {
+      "step": 2,
+      "name": "Diagnose",
+      "status": "OBSERVED",
+      "evidenceIds": [
+        "E01",
+        "E08"
+      ],
+      "finding": "Root Pages entry absent; original UI deployed under subpath; dynamic /api/continuum not supplied by GitHub Pages. Last item remains runtime blocker."
+    },
+    {
+      "step": 3,
+      "name": "Plan",
+      "status": "OBSERVED",
+      "evidenceIds": [
+        "E02",
+        "E08"
+      ],
+      "finding": "Smallest static root redirect to byte-preserved UI; independent branch for source completion, no second writer, no private data migration; revert scoped commits for rollback."
+    },
+    {
+      "step": 4,
+      "name": "Implement",
+      "status": "VERIFIED",
+      "evidenceIds": [
+        "E01",
+        "E02",
+        "E09"
+      ],
+      "finding": "Root index committed to main; source completion and read-only SHA-256 candidate inspector merged; original UI source Git blobs pinned."
+    },
+    {
+      "step": 5,
+      "name": "Test",
+      "status": "FAILED",
+      "evidenceIds": [
+        "E03",
+        "E04",
+        "E05",
+        "E06"
+      ],
+      "finding": "Original regression attempts failed twice; final source-only tests passed. A previous failure is not erased by later PASS."
+    },
+    {
+      "step": 6,
+      "name": "Validate",
+      "status": "OBSERVED",
+      "evidenceIds": [
+        "E02",
+        "E06",
+        "E07",
+        "E08"
+      ],
+      "finding": "Inspected four-file PR scope, passing source checks and Pages workflow; NO independent browser render, owner API or native device validation."
+    },
+    {
+      "step": 7,
+      "name": "Repair",
+      "status": "VERIFIED",
+      "evidenceIds": [
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "finding": "Replaced false Windows worktree-byte hash expectation with committed Git blob comparison. A malformed intervening edit broke test syntax; full test rewrite corrected it."
+    },
+    {
+      "step": 8,
+      "name": "Retest",
+      "status": "VERIFIED",
+      "evidenceIds": [
+        "E05",
+        "E06"
+      ],
+      "finding": "Final regression and merged main test suites passed on Windows, macOS and Linux; remains source qualification only."
+    },
+    {
+      "step": 9,
+      "name": "Verify",
+      "status": "BLOCKED",
+      "evidenceIds": [
+        "E06",
+        "E07",
+        "E08"
+      ],
+      "finding": "Source CI and deployment workflow observed successful. The original owner runtime, Veritas PRE/POST, receipt chain, live widget and C3 acceptance not verified."
+    },
+    {
+      "step": 10,
+      "name": "Evidence",
+      "status": "OBSERVED",
+      "evidenceIds": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E10"
+      ],
+      "finding": "GitHub commits, PR, successful/failed CI runs, deployment workflow and issue references retained; this record is a review candidate, not a Receipt Ledger artifact."
+    }
+  ],
+  "incidents": [
+    {
+      "id": "CONT-C3-SOURCE-001",
+      "outcome": "FAILED_THEN_REPAIRED",
+      "signature": "Windows checkout worktree hash differs from provenance Git blob",
+      "trigger": "Original UI byte test recomputed Git blob hash from checkout bytes",
+      "evidenceIds": [
+        "E03",
+        "E05",
+        "E06"
+      ],
+      "causeStatus": "INFERRED_SUPPORTED_BY_RETTEST",
+      "rootCause": "Platform checkout line-ending normalization changes worktree bytes; committed Git blobs retain pinned identity",
+      "correction": "Compare git rev-parse HEAD:<path> rather than hashing checked-out source bytes",
+      "crossPlatformRetest": "PASSED_SOURCE_ONLY",
+      "learningEligibility": "CANDIDATE_PENDING_INDEPENDENT_VERITAS_AND_RECEIPT"
+    },
+    {
+      "id": "CONT-C3-SOURCE-002",
+      "outcome": "FAILED_THEN_REPAIRED",
+      "signature": "Node SyntaxError missing ) after argument list in continuum-pages-entry test",
+      "trigger": "Incomplete automated text replacement in test repair",
+      "evidenceIds": [
+        "E04",
+        "E05",
+        "E06"
+      ],
+      "causeStatus": "VERIFIED_BY_CI_LOG",
+      "rootCause": "Malformed inserted JavaScript broke test source and caused import failure on three operating systems",
+      "correction": "Replace full test module and rerun CI instead of trusting patch mutation alone",
+      "crossPlatformRetest": "PASSED_SOURCE_ONLY",
+      "learningEligibility": "CANDIDATE_PENDING_INDEPENDENT_VERITAS_AND_RECEIPT"
+    },
+    {
+      "id": "CONT-C3-DOC-003",
+      "outcome": "OPEN_DOCUMENTATION_GAP",
+      "signature": "Mission issue lacked loop chronology and normalized lessons after merged source work",
+      "trigger": "Missing event-driven handoff before completion reporting",
+      "evidenceIds": [
+        "E02",
+        "E10"
+      ],
+      "causeStatus": "OBSERVED_MISSING_RECORD",
+      "rootCause": "Engineering work recorded in tool/PR history but not reconciled to existing mission issue",
+      "correction": "Use existing mission issue for begin, failure, retest, end and permanent bounded source evidence report",
+      "crossPlatformRetest": "NOT_APPLICABLE_TO_SOURCE_DOCUMENTATION",
+      "learningEligibility": "CANDIDATE_NOT_PROMOTED"
+    }
+  ],
+  "acceptance": {
+    "sourceIntegrity": {
+      "state": "VERIFIED_SOURCE_CI_ONLY",
+      "evidenceIds": [
+        "E06"
+      ]
+    },
+    "pagesDeploy": {
+      "state": "VERIFIED_WORKFLOW_ONLY",
+      "evidenceIds": [
+        "E07"
+      ]
+    },
+    "realBrowserRendering": "UNVERIFIED",
+    "originalOwnerServiceSource": "BLOCKED",
+    "originalOwnerStoreBinding": "BLOCKED",
+    "authenticatedLiveReadback": "UNVERIFIED",
+    "deviceWidgetParity": "UNVERIFIED",
+    "formulaRequired": false,
+    "formulaExecutionState": "NOT_EXECUTED",
+    "independentVeritasPre": "NOT_EXECUTED",
+    "independentVeritasPost": "NOT_EXECUTED",
+    "independentVeritasDecision": "NOT_ISSUED",
+    "canonicalReceipt": {
+      "created": false,
+      "id": null
+    },
+    "learningLedger": {
+      "updated": false,
+      "admission": "NOT_SUBMITTED"
+    },
+    "productionQualified": false,
+    "missionClosed": false
+  },
+  "nextAction": "Inspect the actual running original owner service and source/module SHA-256 on the authorized PC, then reconcile module and provider identity before governed live readback.",
+  "privacy": "PUBLIC_SOURCE_METADATA_ONLY_NO_OWNER_RECORDS"
+}
