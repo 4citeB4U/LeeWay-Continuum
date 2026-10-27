@@ -12,7 +12,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
-import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
@@ -41,9 +41,9 @@ test('Original UI includes all its source-local asset references',()=>{
   }
 });
 test('Original Continuum UI files exactly match the source provenance Git blobs',()=>{
-  for(const [path,expected] of Object.entries(originalBlobs)) {
-    const bytes=load(path);
-    const actual=createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');
-    assert.equal(actual,expected,path+' source blob changed');
+  for(const [path,expected] of Object.entries(originalB    assert.ok(existsSync(resolve(root,path)),path+' source file absent');
+    // Git checkout may normalize LF to CRLF on Windows. Use committed Git object identity.
+    const actual=execFileSync('git',['rev-parse','HEAD:'+path],{cwd:root,encoding:'utf8'}).trim();
+    assert.equal(actual,expected,path+' source Git blob changed');hanged');
   }
 });
