@@ -26,6 +26,20 @@ This is a source contract, not a claim that any provider is currently connected.
 4. Every write enters the Continuum Formula and admission path first. Exact original-byte recovery is required; summaries and condensed projections are not substitutes for the source object.
 5. A provider is not accepted until upload, download, corruption refusal, quota/limit handling, revoke/reconnect, offline queue recovery, duplicate idempotency and independent readback pass.
 
+## One-screen user experience
+
+The original Continuum surface now includes an optional `Connect storage` overlay at `ui/original/continuum-storage-onboarding.mjs`. It presents local storage, Google Drive, MEGA and additional provider choices on one screen, while retaining the existing records browser and authority boundary.
+
+The overlay delegates only this non-secret request to the approved native/runtime host bridge:
+
+```js
+window.LeeWayContinuumBridge.startStorageOnboarding({providerId})
+```
+
+The host, not browser JavaScript, must validate the provider ID, create state and PKCE, open the provider-native consent flow, store the resulting session in the approved vault, and return only a safe status or an allowlisted HTTPS redirect. The browser must never receive a password, refresh token, access token, client secret or provider credential. If the bridge is absent, the screen reports that setup is unavailable and performs no account action.
+
+This is a convenience layer over the existing governed contracts, not a new control plane, account provisioner, database or provider authority.
+
 ## Capacity and recovery
 
 Capacity pressure may produce a bounded proposal. It does not create an account, bucket, folder or “free” storage automatically. Provisioning requires an owner-approved resource, budget/quota, reservation, single-writer fencing, Veritas PRE/POST, readback, canonical receipt and recovery evidence. Provider quotas and free tiers are discovered at runtime and must never be hard-coded as guaranteed capacity.
