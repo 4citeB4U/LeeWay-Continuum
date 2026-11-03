@@ -20,7 +20,7 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const load=p=>readFileSync(resolve(root,p));
 const originalBlobs={
   'ui/original/index.html':'332215d57899922cc9ae6eaa6920b421dfb1a088',
-  'ui/original/continuum.css':'c0b1adc9719f5ad1b8fe5f6734a0624ebe6adea4',
+  'ui/original/continuum.css':'6fdd498c44c767f7b6c31bbe9a447d17961edfd1',
   'ui/original/continuum-app.mjs':'f2d972d9fe8a3f585fc76ba49dc6590926cabbdc',
   'ui/original/continuum-sphere.mjs':'c6da805cc59f0d55d2eb74dcb7a9b3f7e937fc93',
   'ui/original/continuum-depth.mjs':'4844c32b6080df6b1ce9de0fd20397878c887ecf',
