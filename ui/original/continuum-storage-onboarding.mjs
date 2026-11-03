@@ -11,6 +11,7 @@ const $=id=>document.getElementById(id);
 const dialog=$('storage-onboarding');
 const statusBox=$('storage-onboarding-status');
 const messageBox=$('storage-onboarding-message');
+const moreProviders=$('storage-more-providers');
 const providerIds=new Set(['local-continuum','google-drive','mega','pcloud','box','icedrive','internxt']);
 const apiRoot=new URL(document.querySelector('meta[name="continuum-api"]')?.content||'/api/continuum',location.href);
 
@@ -26,10 +27,12 @@ function renderObservedStatus(status){
   if(local?.state)setProviderState('local-continuum',String(local.state));
   else if(status?.initialized===true&&status?.state==='CONNECTED')setProviderState('local-continuum','Available');
   else setProviderState('local-continuum','Needs setup');
-  for(const id of ['google-drive','mega','pcloud']){
+  for(const id of ['google-drive','mega','pcloud','box','icedrive','internxt']){
     const row=rows.get(id);
     setProviderState(id,row?.state?String(row.state):'Not connected');
   }
+  const moreConnected=['pcloud','box','icedrive','internxt'].some(id=>rows.get(id)?.state==='CONNECTED');
+  setProviderState('more-storage',moreConnected?'Connected':'Choose a provider');
   const quota=status?.storageSummary;
   if(quota&&Number.isSafeInteger(quota.capacityBytes)&&Number.isSafeInteger(quota.usedBytes)){
     const available=Math.max(0,quota.capacityBytes-quota.usedBytes);
@@ -45,19 +48,28 @@ async function observeStatus(){
   }catch{statusBox.textContent='This installation has not exposed a live storage status yet.';setProviderState('local-continuum','Needs setup');}
 }
 async function requestConnection(providerId){
-  if(!providerIds.has(providerId)){message('That storage choice is not recognized.',true);return;}
-  const bridge=window.LeeWayContinuumBridge??window.pywebview?.api;
-  if(typeof bridge?.startStorageOnboarding!=='function'){
-    message('The approved connection bridge is not available on this host yet. No account was contacted.',true);
+  if(providerId==='more-storage'){
+    if(moreProviders)moreProviders.hidden=!moreProviders.hidden;
+    message(moreProviders?.hidden?'More storage choices hidden.':'Choose an approved provider below. Each provider will ask for its own permission.');
     return;
   }
+  if(!providerIds.has(providerId)){message('That storage choice is not recognized.',true);return;}
+  const bridge=window.LeeWayContinuumBridge??window.pywebview?.api;
   message('Opening the provider’s secure sign-in…');
   try{
-    const result=await bridge.startStorageOnboarding(Object.freeze({providerId}));
+    let result;
+    if(typeof bridge?.startStorageOnboarding==='function')result=await bridge.startStorageOnboarding(Object.freeze({providerId}));
+    else{
+      const response=await fetch(new URL(apiRoot.pathname.replace(/\/$/,'')+'/provider-onboarding',apiRoot),{method:'POST',headers:{'content-type':'application/json','x-continuum-provider-onboarding':'owner-connect'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({providerId})});
+      const value=await response.json().catch(()=>null);
+      if(!response.ok||value?.ok===false)throw Error(value?.error||'PROVIDER_ONBOARDING_UNAVAILABLE');
+      result=value?.result??value;
+    }
     if(result?.redirectUrl){
       const target=new URL(String(result.redirectUrl),location.href);
       if(target.protocol!=='https:'&&target.origin!==location.origin)throw Error('UNTRUSTED_ONBOARDING_REDIRECT');
-      location.assign(target.href);return;
+      const popup=window.open(target.href,'leeway-provider-consent','popup,width=520,height=720');
+      if(!popup)location.assign(target.href);return;
     }
     if(result?.state==='CONNECTED'||result?.state==='PENDING'){
       message(result?.message|| (result.state==='CONNECTED'?'Storage connected. Refreshing verified status…':'Finish the provider sign-in, then return here.'));
