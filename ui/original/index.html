@@ -20,6 +20,7 @@ AGENTS: ASSESS EXECUTE VERIFY. LICENSE: MIT -->
   <header class="topbar">
     <button id="return-agent" class="subtle" aria-label="Return to Agent Lee">← Agent Lee</button>
     <div class="wordmark"><span class="brand-mark" aria-hidden="true">⬡</span><div>CONTINUUM<small>LEEWAY · YOUR INFORMATION WORLD</small></div></div>
+    <button id="connect-storage" class="subtle connect-storage" type="button">Connect storage</button>
     <div id="connection" class="connection" role="status"><i></i><span>Connecting…</span></div>
   </header>
   <main id="workspace" class="sidebar-collapsed">
@@ -96,9 +97,28 @@ AGENTS: ASSESS EXECUTE VERIFY. LICENSE: MIT -->
       </div>
     </section>
   </main>
+  <dialog id="storage-onboarding" class="storage-dialog" aria-labelledby="storage-onboarding-title">
+    <form method="dialog" class="storage-dialog-card">
+      <div class="storage-dialog-header">
+        <div><p class="eyebrow">ONE-SCREEN SETUP</p><h2 id="storage-onboarding-title">Connect your storage</h2></div>
+        <button id="close-storage-onboarding" class="subtle" type="submit" aria-label="Close storage setup">×</button>
+      </div>
+      <p class="storage-dialog-intro">Start with this device, then connect a cloud account you already own. Continuum keeps the technical work behind the scenes and asks each provider for permission in its own secure sign-in.</p>
+      <div id="storage-onboarding-status" class="storage-onboarding-status" role="status">Checking the current storage connection…</div>
+      <div class="storage-choice-grid" aria-label="Storage choices">
+        <button class="storage-choice" type="button" data-provider="owner-local"><span class="storage-choice-icon" aria-hidden="true">▣</span><span><strong>This device</strong><small>Private offline storage</small></span><em data-provider-state="owner-local">Checking…</em></button>
+        <button class="storage-choice" type="button" data-provider="google-drive"><span class="storage-choice-icon" aria-hidden="true">G</span><span><strong>Google Drive</strong><small>Connect with Google</small></span><em data-provider-state="google-drive">Not connected</em></button>
+        <button class="storage-choice" type="button" data-provider="mega"><span class="storage-choice-icon" aria-hidden="true">M</span><span><strong>MEGA</strong><small>Connect with MEGA</small></span><em data-provider-state="mega">Not connected</em></button>
+        <button class="storage-choice" type="button" data-provider="pcloud"><span class="storage-choice-icon" aria-hidden="true">p</span><span><strong>More storage</strong><small>pCloud, Box and other approved providers</small></span><em data-provider-state="pcloud">Choose later</em></button>
+      </div>
+      <p id="storage-onboarding-message" class="storage-onboarding-message" aria-live="polite">No password or API key is entered into this screen.</p>
+      <p class="storage-dialog-footnote">Continuum remains the authority. Connected providers are optional storage locations, and a remote outage never erases your local copy.</p>
+    </form>
+  </dialog>
   <noscript>This interface needs JavaScript. No database operation has been performed.</noscript>
   <script defer src="./mammoth.browser.min.js"></script>
   <script defer src="./purify.min.js"></script>
   <script type="module" src="./continuum-app.mjs"></script>
+  <script type="module" src="./continuum-storage-onboarding.mjs"></script>
 </body>
 </html>
