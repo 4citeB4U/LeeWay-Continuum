@@ -1,0 +1,81 @@
+{
+  "schema": "leeway.continuum.optional-archive-provider-candidates.v1",
+  "recordDate": "2026-11-02",
+  "state": "PROPOSED_NOT_ENROLLED",
+  "authority": "Continuum retains one canonical durable writer and content provenance. Remote providers are encrypted subordinate recovery/archive destinations only.",
+  "selection": {
+    "preferredPrimaryCloudArchive": "oracle-oci-object",
+    "secondaryRecoveryCandidate": "mega",
+    "optionalFileArchives": ["pcloud", "box"],
+    "releaseEvidenceOnly": "github-release",
+    "notSelectedForThisProfile": ["google-drive", "cloudflare-r2"],
+    "doesNotDeleteExistingProviders": true,
+    "doesNotRevokeExistingCredentials": true
+  },
+  "providers": [
+    {
+      "id": "oracle-oci-object",
+      "role": "ENCRYPTED_CLOUD_RECOVERY",
+      "status": "EXISTING_SOURCE_ADAPTER_PROVIDER_UNBOUND",
+      "adapter": "src/storage/cloud-archives.mjs",
+      "method": "OCI Object Storage S3-compatible API",
+      "required": false,
+      "limits": "20 GB combined Always Free Object + Archive capacity for an Always Free only account; tenancy terms and API quota apply"
+    },
+    {
+      "id": "mega",
+      "role": "SECONDARY_ENCRYPTED_RECOVERY_COPY",
+      "status": "PROPOSED_ADAPTER_NOT_IMPLEMENTED",
+      "method": "Authorized MEGA SDK/API",
+      "required": false,
+      "limits": "20 GB free storage; free transfer is limited",
+      "needs": ["owner account enrollment", "SDK and licensing assessment", "transfer/quota telemetry", "client-side encryption and exact recovery validation"]
+    },
+    {
+      "id": "pcloud",
+      "role": "OPTIONAL_ENCRYPTED_FILE_ARCHIVE",
+      "status": "PROPOSED_ADAPTER_NOT_IMPLEMENTED",
+      "method": "pCloud HTTP API via authorized OAuth",
+      "required": false,
+      "limits": "2 GB initially; up to 10 GB after qualifying account actions",
+      "needs": ["owner OAuth", "account region endpoint selection", "upload traffic accounting", "owner-controlled authenticated encryption"]
+    },
+    {
+      "id": "box",
+      "role": "OPTIONAL_DOCUMENT_AND_SMALL_FILE_ARCHIVE",
+      "status": "PROPOSED_ADAPTER_NOT_IMPLEMENTED",
+      "method": "Box Files API via authorized OAuth",
+      "required": false,
+      "limits": "Free Individual upload limit 250 MB; Free Developer offering may differ",
+      "needs": ["account/plan verification", "owner OAuth", "per-object upload cap", "rate limit and storage quota checks", "owner-controlled authenticated encryption"]
+    },
+    {
+      "id": "github-release",
+      "role": "RELEASE_PACKAGE_AND_APPROVED_ENCRYPTED_EVIDENCE_ONLY",
+      "status": "EXISTING_RELEASE_MANIFEST_SOURCE_ONLY",
+      "adapter": "src/storage/cloud-archives.mjs",
+      "required": false,
+      "limits": "Individual release assets under 2 GiB; not a live file/object database",
+      "needs": ["approved version tag", "release artifact digest", "retention and authorization policy"]
+    }
+  ],
+  "policy": {
+    "noPooledQuotaAuthority": true,
+    "noMultiAccountQuotaCircumvention": true,
+    "noUnencryptedPrivateUploads": true,
+    "noRemoteCanonicalWriter": true,
+    "noCredentialMaterialInRepository": true,
+    "writeOnlyAfterProviderEnrollmentAndVeritas": true,
+    "verifyCiphertextAndOriginalPlaintextHashes": true,
+    "preserveAuthoritativeLocalStoreDuringMigration": true,
+    "failClosedOnQuotasOrUnavailableTransfer": true,
+    "requireEncryptedRestoreProofBeforeMarkingRecoveryHealthy": true,
+    "neverSilentlyOffloadUnrecoverableSoleCopy": true
+  },
+  "productionAdmission": false,
+  "physicalCredentialsBound": false,
+  "remoteObjectWriteExecuted": false,
+  "independentVeritas": "NOT_EXECUTED",
+  "receipt": "NOT_CREATED",
+  "learningLedger": "NOT_UPDATED"
+}
