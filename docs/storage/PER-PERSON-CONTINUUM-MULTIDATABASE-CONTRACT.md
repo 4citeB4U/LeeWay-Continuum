@@ -20,6 +20,10 @@ LICENSE = Existing repository terms.
 - Continuum is the logical data authority and metadata/receipt gate. Storage engines are subordinate replaceable adapters, not independent knowledge sources.
 - GitHub is canonical source/release infrastructure, not a durable database runtime. A self-hosted Continuum deployment may execute on any qualified host, provided its authority reference remains `leeway.continuum` and its physical resources remain subordinate.
 - Formula's exact lossless codec handles content-addressed archive representations, while condensed/lossy mathematical summaries are separate explicitly labeled projections.
+- User-linked cloud providers are optional subordinate object stores. They are connected only after provider-native consent or trusted-host enrollment, their quota and cost are discovered at runtime, and they never create a second Continuum authority.
+- A Google account is an identity and consent path; it does not silently provision Google Drive storage. Drive access requires a separately approved OAuth scope and user-owned Drive resource.
+- GitHub Releases may hold versioned manifests, packages and bounded encrypted release evidence. It is not the user's live private media vault or a replacement for Continuum persistence.
+- Offline operation uses the qualified local Continuum scope and its governed outbox/replica path. Provider links are optional synchronization targets; no separate provider-owned manifest database is introduced.
 - Existing Continuum SQLite and legacy raw records remain unchanged; qualified new codecs are versioned and must prove byte-exact reconstruction before acceptance.
 - LDWMD/VRAM Database handles transient tensor/device memory leases independently. Only selected durable checkpoint objects and their provenance go through Continuum, not every frame or allocator operation.
 - Device/OS/LLM neutrality: no single Windows laptop, phone, GPU, database server, Google account, model, or provider is required for local functional operation.

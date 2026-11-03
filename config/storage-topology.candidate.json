@@ -63,6 +63,62 @@
       "module": "src/storage/cloud-archives.mjs"
     }
   ],
+  "userLinkedProviderCandidates": [
+    {
+      "id": "google-drive",
+      "role": "USER_OBJECT_STORE",
+      "auth": "OAUTH2_USER_CONSENT",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "mega",
+      "role": "USER_OBJECT_STORE",
+      "auth": "PROVIDER_AUTH_CONTRACT_REQUIRED",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "pcloud",
+      "role": "USER_OBJECT_STORE",
+      "auth": "OAUTH2_USER_CONSENT",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "box",
+      "role": "USER_OBJECT_STORE",
+      "auth": "OAUTH2_USER_CONSENT",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "icedrive",
+      "role": "USER_OBJECT_STORE",
+      "auth": "PROVIDER_AUTH_CONTRACT_REQUIRED",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "internxt",
+      "role": "USER_OBJECT_STORE",
+      "auth": "PROVIDER_AUTH_CONTRACT_REQUIRED",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    }
+  ],
   "logicalCells": [
     {
       "id": "runtime-state",

@@ -21,6 +21,7 @@ GitHub is the canonical source and release surface. It is not treated as a persi
 - Enforced that device, OS, repository, and storage labels cannot replace `leeway.continuum`.
 - Kept `ownerId` and `bodyId` as explicit access/placement scope only.
 - Updated topology and production-lock documentation to state the boundary.
+- Added a fail-closed subordinate-provider catalog and onboarding contract for local Continuum, R2, OCI, Google Drive, MEGA, pCloud, Box, Icedrive, Internxt and GitHub Releases. The catalog stores no provider secrets and marks all user-linked providers unbound until their native authorization and runtime readback are qualified.
 - Added negative and positive source tests.
 
 No runtime process, owner store, credential, database, replication channel, or production deployment was changed.
@@ -31,6 +32,7 @@ No runtime process, owner store, credential, database, replication channel, or p
 - `npm run check:syntax`: passed.
 - `git diff --check`: passed.
 - Authority negative tests reject `pc-primary`, `phone-fold6`, `windows`, `android`, `github`, and storage resource labels as authority references.
+- Provider catalog tests: 3 passed; total local suite after the continuation patch: 88 passed, 0 failed.
 - Pull request #10: https://github.com/4citeB4U/LeeWay-Continuum/pull/10.
 - Remote source-only CI for commit `69508a5698ec15accc36ada517871e88231808c8` passed on Linux, Windows, and macOS: https://github.com/4citeB4U/LeeWay-Continuum/actions/runs/41585080653.
 
@@ -48,6 +50,7 @@ The repaired source is therefore source- and CI-qualified, but is not yet runtim
 - The running PC service must be restarted only through the approved workflow before this source contract can become active there.
 - Fold6-local Continuum must be independently readback-qualified.
 - Formula exact-byte condensation/reconstruction, capacity measurement, governed compartment expansion, interruption recovery, Veritas PRE/POST, Receipt Authority, and Learning Ledger admission remain live gates.
+- Google Drive, MEGA, pCloud, Box, Icedrive and Internxt remain user-consent/provider-contract gates; no account was accessed and no quota was hard-coded as guaranteed capacity.
 
 ## Evidence state
 
