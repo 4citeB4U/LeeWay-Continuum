@@ -1,0 +1,125 @@
+{
+  "schema": "leeway.continuum.optional-archive-provider-candidates.v1",
+  "recordDate": "2026-11-03",
+  "state": "PROPOSED_NOT_ENROLLED",
+  "authority": "Continuum retains one canonical durable writer and content provenance. Remote providers are encrypted subordinate recovery/archive destinations only.",
+  "selection": {
+    "preferredFirstEnrollment": "mega",
+    "preferredAutomatedObjectStoreCandidate": "backblaze-b2",
+    "secondaryRecoveryCandidate": "pcloud",
+    "optionalFileArchives": [
+      "box"
+    ],
+    "releaseEvidenceOnly": "github-release",
+    "deferredUntilTenancyResolved": [
+      "oracle-oci-object"
+    ],
+    "notSelectedForThisProfile": [
+      "google-drive",
+      "cloudflare-r2"
+    ],
+    "doesNotDeleteExistingProviders": true,
+    "doesNotRevokeExistingCredentials": true
+  },
+  "providers": [
+    {
+      "id": "oracle-oci-object",
+      "role": "FUTURE_OPTIONAL_ENCRYPTED_CLOUD_RECOVERY",
+      "status": "DEFERRED_TENANCY_UNVERIFIED_EXISTING_ADAPTER_UNBOUND",
+      "adapter": "src/storage/cloud-archives.mjs",
+      "method": "OCI Object Storage S3-compatible API",
+      "required": false,
+      "limits": "20 GB combined Always Free Object + Archive capacity for an Always Free only account; tenancy terms and API quota apply"
+    },
+    {
+      "id": "mega",
+      "role": "FIRST_ENROLLMENT_ENCRYPTED_RECOVERY_COPY",
+      "status": "PROPOSED_ADAPTER_NOT_IMPLEMENTED",
+      "method": "Authorized MEGA SDK/API",
+      "required": false,
+      "limits": "20 GB free storage; free transfer is limited",
+      "needs": [
+        "owner account enrollment",
+        "SDK and licensing assessment",
+        "transfer/quota telemetry",
+        "client-side encryption and exact recovery validation",
+        "live provider download and SHA-256 roundtrip"
+      ]
+    },
+    {
+      "id": "backblaze-b2",
+      "role": "AUTOMATED_ENCRYPTED_OBJECT_RECOVERY_CANDIDATE",
+      "status": "PROPOSED_ADAPTER_NOT_IMPLEMENTED",
+      "method": "S3-compatible B2 API with owner-issued application key",
+      "required": false,
+      "limits": "First 10 GB free; egress, usage, account and payment terms must be reviewed",
+      "needs": [
+        "owner B2 account and restricted key enrollment",
+        "S3 provider binding without replacing OCI adapter",
+        "measured quotas and usage ceiling",
+        "encrypted real-object upload/readback and restart/restore test"
+      ]
+    },
+    {
+      "id": "pcloud",
+      "role": "OPTIONAL_ENCRYPTED_FILE_ARCHIVE",
+      "status": "PROPOSED_ADAPTER_NOT_IMPLEMENTED",
+      "method": "pCloud HTTP API via authorized OAuth",
+      "required": false,
+      "limits": "2 GB initially; up to 10 GB after qualifying account actions",
+      "needs": [
+        "owner OAuth",
+        "account region endpoint selection",
+        "upload traffic accounting",
+        "owner-controlled authenticated encryption"
+      ]
+    },
+    {
+      "id": "box",
+      "role": "OPTIONAL_DOCUMENT_AND_SMALL_FILE_ARCHIVE",
+      "status": "PROPOSED_ADAPTER_NOT_IMPLEMENTED",
+      "method": "Box Files API via authorized OAuth",
+      "required": false,
+      "limits": "Free Individual upload limit 250 MB; Free Developer offering may differ",
+      "needs": [
+        "account/plan verification",
+        "owner OAuth",
+        "per-object upload cap",
+        "rate limit and storage quota checks",
+        "owner-controlled authenticated encryption"
+      ]
+    },
+    {
+      "id": "github-release",
+      "role": "RELEASE_PACKAGE_AND_APPROVED_ENCRYPTED_EVIDENCE_ONLY",
+      "status": "EXISTING_RELEASE_MANIFEST_SOURCE_ONLY",
+      "adapter": "src/storage/cloud-archives.mjs",
+      "required": false,
+      "limits": "Individual release assets under 2 GiB; not a live file/object database",
+      "needs": [
+        "approved version tag",
+        "release artifact digest",
+        "retention and authorization policy"
+      ]
+    }
+  ],
+  "policy": {
+    "noPooledQuotaAuthority": true,
+    "noMultiAccountQuotaCircumvention": true,
+    "noUnencryptedPrivateUploads": true,
+    "noRemoteCanonicalWriter": true,
+    "noCredentialMaterialInRepository": true,
+    "writeOnlyAfterProviderEnrollmentAndVeritas": true,
+    "verifyCiphertextAndOriginalPlaintextHashes": true,
+    "preserveAuthoritativeLocalStoreDuringMigration": true,
+    "failClosedOnQuotasOrUnavailableTransfer": true,
+    "requireEncryptedRestoreProofBeforeMarkingRecoveryHealthy": true,
+    "neverSilentlyOffloadUnrecoverableSoleCopy": true
+  },
+  "productionAdmission": false,
+  "physicalCredentialsBound": false,
+  "remoteObjectWriteExecuted": false,
+  "independentVeritas": "NOT_EXECUTED",
+  "receipt": "NOT_CREATED",
+  "learningLedger": "NOT_UPDATED"
+}
