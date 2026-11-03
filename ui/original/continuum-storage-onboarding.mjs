@@ -60,10 +60,10 @@ async function requestConnection(providerId){
       location.assign(target.href);return;
     }
     if(result?.state==='CONNECTED'||result?.state==='PENDING'){
-      message(result.state==='CONNECTED'?'Storage connected. Refreshing verified status…':'Finish the provider sign-in, then return here.');
+      message(result?.message|| (result.state==='CONNECTED'?'Storage connected. Refreshing verified status…':'Finish the provider sign-in, then return here.'));
       await observeStatus();return;
     }
-    message('The provider did not complete the connection. Your existing storage was not changed.',true);
+    message(result?.message||'The provider did not complete the connection. Your existing storage was not changed.',true);
   }catch(error){message(error?.message==='UNTRUSTED_ONBOARDING_REDIRECT'?'The connection was blocked because its return address was not trusted.':'The secure connection could not be completed. Your existing storage was not changed.',true);}
 }
 function open(){
