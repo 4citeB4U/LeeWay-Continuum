@@ -46,7 +46,7 @@ async function observeStatus(){
 }
 async function requestConnection(providerId){
   if(!providerIds.has(providerId)){message('That storage choice is not recognized.',true);return;}
-  const bridge=window.LeeWayContinuumBridge;
+  const bridge=window.LeeWayContinuumBridge??window.pywebview?.api;
   if(typeof bridge?.startStorageOnboarding!=='function'){
     message('The approved connection bridge is not available on this host yet. No account was contacted.',true);
     return;
