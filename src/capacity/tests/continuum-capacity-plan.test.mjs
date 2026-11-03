@@ -15,10 +15,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { planContinuumCapacity } from '../continuum-capacity-plan.mjs';
 
-const cell = {ownerId:'owner-fixture',bodyId:'pc-fixture',cellId:'knowledge',providerId:'canonical',revision:'v1',role:'CANONICAL'};
+const cell = {authorityRef:'leeway.continuum',ownerId:'owner-fixture',bodyId:'pc-fixture',cellId:'knowledge',providerId:'canonical',revision:'v1',role:'CANONICAL'};
 const policy = {storageHighPercent:80,queueHighCount:100,writeP95HighMs:400,readP95HighMs:300,maxObservationAgeMs:60000};
 const nowMs = 1_000_000;
-const metrics = {ownerId:cell.ownerId,bodyId:cell.bodyId,cellId:cell.cellId,providerId:cell.providerId,
+const metrics = {authorityRef:cell.authorityRef,ownerId:cell.ownerId,bodyId:cell.bodyId,cellId:cell.cellId,providerId:cell.providerId,
   revision:cell.revision,observedAtMs:nowMs-1000,storageCapacityBytes:10000,storageUsedBytes:4000,
   queueDepth:1,writeP95Ms:10,readP95Ms:10};
 const plan = overrides => planContinuumCapacity({cell,metrics,policy,nowMs,...overrides});

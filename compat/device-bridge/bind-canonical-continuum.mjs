@@ -12,7 +12,10 @@ LICENSE: MIT
 */
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
+import {assertContinuumAuthorityRef,CONTINUUM_AUTHORITY_REF,CONTINUUM_AUTHORITY_MODE} from '../../src/authority/continuum-authority.mjs';
 export async function bindCanonicalContinuum({modulePath, binding, context, governancePreGate, allowTestOnlyGate=false}={}){
+ const authorityRef=binding?.authorityRef||CONTINUUM_AUTHORITY_REF;
+ try { assertContinuumAuthorityRef(authorityRef); } catch { throw Error('CANONICAL_CONTINUUM_AUTHORITY_INVALID'); }
  if (!modulePath || !binding?.databasePath || !binding?.ownerId || !binding?.bodyId) throw Error('CANONICAL_CONTINUUM_BINDING_REQUIRED');
  if (!context || context.ownerId!==binding.ownerId || context.bodyId!==binding.bodyId || !Array.isArray(context.capabilities) || !context.capabilities.includes('continuum.read') || !context.capabilities.includes('continuum.write')) throw Error('CONTINUUM_OWNER_WRITE_SCOPE_REQUIRED');
  if (allowTestOnlyGate || typeof governancePreGate!=='function') throw Error('CONTINUUM_PRODUCTION_GATE_REQUIRED');
@@ -22,5 +25,5 @@ export async function bindCanonicalContinuum({modulePath, binding, context, gove
  if (typeof service?.ingestFile!=='function' || typeof service?.getContent!=='function') throw Error('CANONICAL_CONTINUUM_RW_UNBOUND');
  // This binding intentionally performs no enrollment, initialization or write.
  // The canonical runtime must complete owner-authorized initialization before archival.
- return Object.freeze({service,context});
+ return Object.freeze({service,context,authorityRef,authorityMode:CONTINUUM_AUTHORITY_MODE,scopeKind:'OWNER_BODY_SCOPE'});
 }

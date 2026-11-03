@@ -26,7 +26,12 @@ test('all four engines are explicit and none creates a database',()=>{
   const a=make(kind);
   assert.equal(a.descriptor.createsDatabase,false);
   assert.equal(a.descriptor.bindingState,'SOURCE_INJECTED_UNQUALIFIED');
+  assert.equal(a.descriptor.authorityRef,'leeway.continuum');
+  assert.equal(a.descriptor.scopeKind,'OWNER_BODY_SCOPE');
  }
+});
+test('device or repository names cannot replace the logical Continuum authority',()=>{
+ assert.throws(()=>createContinuumEngineAdapter({kind:'sqlite',ownerId,bodyId,resourceId,authorityRef:'pc-primary',authorize:async()=>true,handlers:{status:async()=>({}),getContent:async()=>({}),ingestFile:async()=>({})}}),/ENGINE_AUTHORITY_INVALID/);
 });
 test('SQLite canonical admission is injected, not self-issued',async()=>{
  const a=make('sqlite');assert.deepEqual(await a.invoke('ingestFile',{},context),{operation:'ingestFile'});

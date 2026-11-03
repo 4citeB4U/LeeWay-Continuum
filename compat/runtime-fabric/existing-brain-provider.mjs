@@ -7,6 +7,7 @@ AGENTS: ASSESS EXECUTE VERIFY. LICENSE: MIT */
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
+import {CONTINUUM_AUTHORITY_REF,CONTINUUM_AUTHORITY_MODE} from '../../src/authority/continuum-authority.mjs';
 
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const alive="COALESCE(status,'') != 'tombstoned'";
@@ -15,7 +16,8 @@ const definitions={knowledge:{table:'nodes',where:alive+' AND NOT '+hardware,idC
 const jsonBytes=value=>Buffer.from(JSON.stringify(value,null,2),'utf8');
 function code(message){const e=new Error(message);e.code=message;return e;}
 function parseJson(value,fallback){try{return JSON.parse(value);}catch{return fallback;}}
-export function createExistingBrainProvider({databasePath,bodyId,ownerId=bodyId}){
+export function createExistingBrainProvider({databasePath,bodyId,ownerId=bodyId,authorityRef=CONTINUUM_AUTHORITY_REF}){
+  if(authorityRef!==CONTINUUM_AUTHORITY_REF)throw code('EXISTING_BRAIN_AUTHORITY_INVALID');
   if(!databasePath||!bodyId||!ownerId||!fs.existsSync(databasePath))throw code('EXISTING_BRAIN_BINDING_REQUIRED');
   const db=new DatabaseSync(databasePath,{readOnly:true});db.exec('PRAGMA query_only=ON; PRAGMA busy_timeout=1500');
   let closed=false;
@@ -26,7 +28,7 @@ export function createExistingBrainProvider({databasePath,bodyId,ownerId=bodyId}
   function decodeId(recordId){const prefix='brain:'+bodyId+':';if(typeof recordId!=='string'||recordId.length>4096||!recordId.startsWith(prefix))throw code('RECORD_OUTSIDE_BODY');const tail=recordId.slice(prefix.length),colon=tail.indexOf(':'),view=tail.slice(0,colon),encoded=tail.slice(colon+1);if(!Object.hasOwn(definitions,view)||!encoded||!/^[a-zA-Z0-9_-]+$/.test(encoded))throw code('RECORD_ID_INVALID');const id=Buffer.from(encoded,'base64url').toString('utf8');if(Buffer.from(id).toString('base64url')!==encoded)throw code('RECORD_ID_INVALID');return{view,id};}
   function normalize(row,view){
     const d=definitions[view],sourceId=String(row[d.idColumn]),bytes=jsonBytes(row),experience=view==='experience',receipts=experience?parseJson(row.receipt_refs_json,[]):[];
-    return{recordId:encodeId(view,sourceId),universeId:null,viewId:view,collection:d.collection,title:experience?(row.goal||row.capability_id||sourceId):(row.title||sourceId),mimeType:'application/json',byteLength:bytes.length,contentSha256:sha(bytes),ownerId,bodyId,source:{kind:'EXISTING_BRAIN_SQLITE',cellId:'device-brain',sourceRecordId:sourceId,table:d.table,representation:'RETAINED_RECORD_JSON',sourceState:experience?row.veritas_status||null:row.status||null,sourceDomain:row.domain||null,presentationOnly:true,ownerNamespace:'BODY_LOCAL',
+    return{recordId:encodeId(view,sourceId),universeId:null,viewId:view,collection:d.collection,title:experience?(row.goal||row.capability_id||sourceId):(row.title||sourceId),mimeType:'application/json',byteLength:bytes.length,contentSha256:sha(bytes),authorityRef,authorityMode:CONTINUUM_AUTHORITY_MODE,scopeKind:'OWNER_BODY_SCOPE',ownerId,bodyId,source:{kind:'EXISTING_BRAIN_SQLITE',cellId:'device-brain',sourceRecordId:sourceId,table:d.table,representation:'RETAINED_RECORD_JSON',sourceState:experience?row.veritas_status||null:row.status||null,sourceDomain:row.domain||null,presentationOnly:true,ownerNamespace:'BODY_LOCAL',
       recordedRelativePath:!experience&&typeof row.source_path==='string'&&row.source_path.length<=1024?row.source_path:null,
       parentSourceRecordId:!experience&&typeof row.parent_id==='string'&&row.parent_id.length<=4096?row.parent_id:null,
       parentLabel:!experience&&typeof row.parent_id==='string'?db.prepare('SELECT title FROM nodes WHERE id=?').get(row.parent_id)?.title||null:null,
@@ -47,7 +49,7 @@ export function createExistingBrainProvider({databasePath,bodyId,ownerId=bodyId}
   }
   function readCounts(){const views=Object.entries(definitions).map(([id,d])=>({id,count:db.prepare('SELECT count(*) n FROM '+d.table+' WHERE '+d.where).get().n,description:d.description,presentationOnly:true,source:{cellId:'device-brain',table:d.table}}));return{total:views.reduce((n,v)=>n+v.count,0),views,universes:[],observedAt:new Date().toISOString()};}
   return{
-    status(context){auth(context);const counts=this.counts(context);return{state:'READ_ONLY',label:'Connected · existing stores',ownerId,bodyId,recordCount:counts.total,writeAllowed:false,writeExecutorBound:false,writeAdmissionBound:false,writeAuthorizationMode:'READ_ONLY_PROJECTION',writeBlockReason:'Existing records are connected. This provider exposes retained Brain records; owner file intake requires the bound Continuum storage provider.',governanceState:'CONTINUUM_STORAGE_ADMISSION_UNBOUND',retrievalMode:'Source-linked lexical retrieval',providers:[{cellId:'device-brain',mode:'READ_ONLY',createsDatabase:false}]};},
+    status(context){auth(context);const counts=this.counts(context);return{state:'READ_ONLY',label:'Connected · existing stores',authorityRef,authorityMode:CONTINUUM_AUTHORITY_MODE,scopeKind:'OWNER_BODY_SCOPE',ownerId,bodyId,recordCount:counts.total,writeAllowed:false,writeExecutorBound:false,writeAdmissionBound:false,writeAuthorizationMode:'READ_ONLY_PROJECTION',writeBlockReason:'Existing records are connected. This provider exposes retained Brain records; owner file intake requires the bound Continuum storage provider.',governanceState:'CONTINUUM_STORAGE_ADMISSION_UNBOUND',retrievalMode:'Source-linked lexical retrieval',providers:[{cellId:'device-brain',mode:'READ_ONLY',createsDatabase:false}]};},
     counts(context){auth(context);return readSnapshot(readCounts);},
     list(options={},context){auth(context);return readSnapshot(()=>{if(options.viewId!=='all')return readPage(options);const limit=options.limit??50;if(!Number.isInteger(limit)||limit<1||limit>128)throw code('PAGE_LIMIT_INVALID');let state={index:0,inner:null};const views=Object.keys(definitions);if(options.cursor){const c=decodeCursor(options.cursor,16384);if(c.viewId!=='all'||!Number.isInteger(c.index)||c.index<0||c.index>=views.length||(c.inner!==null&&typeof c.inner!=='string'))throw code('CURSOR_SCOPE_INVALID');state=c;}const records=[];while(state.index<views.length&&records.length<limit){const page=readPage({viewId:views[state.index],limit:limit-records.length,cursor:state.inner});records.push(...page.records);state.inner=page.nextCursor;if(state.inner)break;state.index++;}return{records,total:readCounts().total,nextCursor:state.index<views.length?encodeCursor({viewId:'all',index:state.index,inner:state.inner}):null,pagination:'SOURCE_ID_KEYSET_CURRENT_READ_SNAPSHOT'};});},
     inspect(recordId,context){auth(context);const{row,view}=rowFor(recordId);return normalize(row,view);},

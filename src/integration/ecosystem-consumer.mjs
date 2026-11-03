@@ -12,6 +12,7 @@ AUTHORITY: SOURCE CANDIDATE, no JWT/issuer grants, Veritas bypass or live enroll
 LICENSE: MIT
 */
 import {createHash} from 'node:crypto';
+import {assertContinuumAuthorityRef,CONTINUUM_AUTHORITY_REF,CONTINUUM_AUTHORITY_MODE} from '../authority/continuum-authority.mjs';
 const fail=s=>{throw Object.assign(new Error(s),{code:s});};
 const ident=s=>typeof s==='string'&&/^[A-Za-z0-9_.:@/-]{1,256}$/.test(s);
 const digest=b=>createHash('sha256').update(b).digest('hex');
@@ -21,8 +22,9 @@ export const LEEWAY_CONTINUUM_CONSUMERS=Object.freeze([
  'maps','logistics','pocket-id','agent-vt','receipt-ledger','learning-ledger'
 ]);
 export function createContinuumConsumer({
-  consumerId,ownerId,bodyId,authorize,transport,writeEnabled=false
+  consumerId,ownerId,bodyId,authorityRef=CONTINUUM_AUTHORITY_REF,authorize,transport,writeEnabled=false
 }={}) {
+ try { assertContinuumAuthorityRef(authorityRef); } catch { fail('CONTINUUM_CONSUMER_AUTHORITY_INVALID'); }
  if(!LEEWAY_CONTINUUM_CONSUMERS.includes(consumerId) || ![ownerId,bodyId].every(ident) ||
    typeof authorize!=='function'||typeof transport?.status!=='function'||
    typeof transport?.getContent!=='function'||typeof transport?.search!=='function' ||
@@ -36,7 +38,7 @@ export function createContinuumConsumer({
    const need=operation==='ingestFile'?'continuum.write':'continuum.read';
    if(!context.capabilities.includes(need))fail('CONTINUUM_CONSUMER_SCOPE_DENIED');
    if(operation==='ingestFile'&&!writeEnabled)fail('CONTINUUM_CONSUMER_WRITE_DISABLED');
-   if(await authorize({consumerId,ownerId,bodyId,operation,request,context})!==true){
+   if(await authorize({authorityRef,consumerId,ownerId,bodyId,operation,request,context})!==true){
      fail('CONTINUUM_CONSUMER_NOT_AUTHORIZED');
    }
  }
@@ -48,7 +50,8 @@ export function createContinuumConsumer({
    return result;
  }
  return Object.freeze({
-   descriptor:Object.freeze({consumerId,ownerId,bodyId,capabilityRef:'leeway.continuum',
+   descriptor:Object.freeze({consumerId,ownerId,bodyId,authorityRef,authorityMode:CONTINUUM_AUTHORITY_MODE,
+     scopeKind:'OWNER_BODY_SCOPE',capabilityRef:authorityRef,
      writeEnabled,connected:'NOT_PROBED',hostOnly:true,createsDatabase:false}),
    async status(context){await allowed('status',null,context);return transport.status(context);},
    async search(options,context){await allowed('search',options,context);return transport.search(options,context);},

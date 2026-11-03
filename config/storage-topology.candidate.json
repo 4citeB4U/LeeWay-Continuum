@@ -4,7 +4,10 @@
   "status": "CANDIDATE_SOURCE_ONLY",
   "canonicalAuthority": {
     "component": "LeeWay Continuum",
+    "authorityRef": "leeway.continuum",
+    "authorityMode": "DEPLOYMENT_INDEPENDENT_LOGICAL_AUTHORITY",
     "scope": "OWNER_AND_BODY",
+    "scopeMeaning": "ACCESS_AND_PLACEMENT_SCOPE_ONLY; NOT CONTINUUM_AUTHORITY",
     "liveBinding": "NOT_PROBED",
     "originalRuntimePort": "127.0.0.1:8890",
     "verifiedSnapshot": "USER_PROVIDED_REPORT_ONLY"
@@ -12,6 +15,7 @@
   "databases": [
     {
       "id": "sqlite",
+      "authorityRef": "leeway.continuum",
       "role": "CANONICAL_RECORDS",
       "status": "EXISTING_LOCAL_PROVIDER_REPORTED",
       "module": "src/adapters/engine-adapters.mjs",
@@ -19,18 +23,21 @@
     },
     {
       "id": "duckdb",
+      "authorityRef": "leeway.continuum",
       "role": "DERIVED_ANALYTICS",
       "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
       "module": "src/adapters/engine-adapters.mjs"
     },
     {
       "id": "pouchdb",
+      "authorityRef": "leeway.continuum",
       "role": "OFFLINE_REPLICA",
       "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
       "module": "src/adapters/engine-adapters.mjs"
     },
     {
       "id": "electric_postgresql",
+      "authorityRef": "leeway.continuum",
       "role": "OPTIONAL_SYNC_TRANSPORT",
       "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
       "module": "src/adapters/engine-adapters.mjs"

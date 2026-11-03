@@ -14,7 +14,7 @@ LICENSE: MIT
 import {planContinuumCapacity} from './continuum-capacity-plan.mjs';
 
 const fault=s=>{throw Object.assign(new Error(s),{code:s});};
-const identity=(a,b)=>a?.ownerId===b?.ownerId&&a?.bodyId===b?.bodyId&&a?.cellId===b?.cellId&&a?.providerId===b?.providerId&&a?.revision===b?.revision;
+const identity=(a,b)=>a?.authorityRef===b?.authorityRef&&a?.ownerId===b?.ownerId&&a?.bodyId===b?.bodyId&&a?.cellId===b?.cellId&&a?.providerId===b?.providerId&&a?.revision===b?.revision;
 const validProof=(p,kind,plan,requestId)=>p?.verified===true&&p.kind===kind&&p.proposalSha256===plan.proposalSha256&&p.requestId===requestId&&typeof p.proofId==='string'&&p.proofId.length>0;
 
 /**
@@ -47,7 +47,7 @@ export function createGovernedCompartmentProvisioner({custody,veritas,placement,
      const reservation=await placement.reserve({requestId,proposal,pre});
      if(!reservation||reservation.requestId!==requestId||
        reservation.proposalSha256!==proposal.proposalSha256||
-       reservation.ownerId!==cell.ownerId||reservation.bodyId!==cell.bodyId||
+       reservation.authorityRef!==cell.authorityRef||reservation.ownerId!==cell.ownerId||reservation.bodyId!==cell.bodyId||
        reservation.cellId!==cell.cellId||typeof reservation.resourceId!=='string'||
        reservation.resourceId===cell.providerId||reservation.resourceId.length===0)
        fault('CONTINUUM_TARGET_RESERVATION_INVALID');
@@ -59,7 +59,7 @@ export function createGovernedCompartmentProvisioner({custody,veritas,placement,
      const observation=await readback.verify({requestId,proposal,reservation,created});
      if(observation?.verified!==true||observation?.resourceId!==reservation.resourceId||
         observation?.requestId!==requestId||observation?.sourceRevision!==cell.revision||
-        observation?.ownerId!==cell.ownerId||observation?.bodyId!==cell.bodyId)
+       observation?.authorityRef!==cell.authorityRef||observation?.ownerId!==cell.ownerId||observation?.bodyId!==cell.bodyId)
        fault('CONTINUUM_DURABLE_READBACK_FAILED');
      const post=await veritas.post({requestId,proposal,pre,reservation,observation});
      if(!validProof(post,'POST',proposal,requestId)||post.preProofId!==pre.proofId)

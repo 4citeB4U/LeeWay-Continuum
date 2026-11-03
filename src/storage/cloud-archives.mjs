@@ -13,6 +13,7 @@ AUTHORITY: SOURCE_CANDIDATE_ONLY. Does not grant cloud credentials, encrypt auto
 LICENSE: MIT
 */
 import {createHash} from 'node:crypto';
+import {assertContinuumAuthorityRef,CONTINUUM_AUTHORITY_REF,CONTINUUM_AUTHORITY_MODE} from '../authority/continuum-authority.mjs';
 const fail = message => { throw Object.assign(new Error(message),{code:message}); };
 const id = x => typeof x==='string' && /^[A-Za-z0-9_.:@/-]{1,256}$/.test(x);
 const sha = x => createHash('sha256').update(x).digest('hex');
@@ -22,8 +23,9 @@ const authorized = (context,ownerId,bodyId) =>
   !!context && context.ownerId===ownerId && context.bodyId===bodyId &&
   Array.isArray(context.capabilities) && context.capabilities.includes('continuum.archive');
 export function createEncryptedObjectArchive({
-  kind,ownerId,bodyId,resourceId,authorize,crypto,transport,maxChunkBytes=MAX_CHUNK
+  kind,ownerId,bodyId,resourceId,authorityRef=CONTINUUM_AUTHORITY_REF,authorize,crypto,transport,maxChunkBytes=MAX_CHUNK
 }={}) {
+  try { assertContinuumAuthorityRef(authorityRef); } catch { fail('CONTINUUM_CLOUD_ARCHIVE_AUTHORITY_INVALID'); }
   if(!TYPES.includes(kind) || ![ownerId,bodyId,resourceId].every(id) ||
     typeof authorize!=='function' || typeof crypto?.seal!=='function' || typeof crypto?.open!=='function' ||
     typeof transport?.putObject!=='function' || typeof transport?.getObject!=='function' ||
@@ -32,13 +34,14 @@ export function createEncryptedObjectArchive({
   }
   const ownerScope=sha(Buffer.from(ownerId+'\0'+bodyId));
   const descriptor=Object.freeze({
+    authorityRef,authorityMode:CONTINUUM_AUTHORITY_MODE,scopeKind:'OWNER_BODY_SCOPE',
     kind,resourceId,ownerScope,role:'ENCRYPTED_RECOVERY_COPY',limitBytes:maxChunkBytes,
     createsDatabase:false,productionQualified:false,credentialSource:'TRUSTED_HOST_ONLY'
   });
   async function archive({bytes,requestId,context}={}) {
     if(!id(requestId)||!authorized(context,ownerId,bodyId))fail('CONTINUUM_ARCHIVE_OWNER_DENIED');
     if(!(bytes instanceof Uint8Array)||bytes.length===0||bytes.length>maxChunkBytes)fail('CONTINUUM_ARCHIVE_CHUNK_INVALID');
-    if(await authorize({ownerId,bodyId,kind,resourceId,operation:'archive',requestId,context})!==true){
+    if(await authorize({authorityRef,ownerId,bodyId,kind,resourceId,operation:'archive',requestId,context})!==true){
       fail('CONTINUUM_ARCHIVE_ADMISSION_DENIED');
     }
     const original=new Uint8Array(bytes),originalSha256=sha(original);
