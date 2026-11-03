@@ -14,7 +14,7 @@ This is a source contract, not a claim that any provider is currently connected.
 | Cloudflare R2 | Encrypted recovery/object archive | Adapter source; credentials and bucket unbound |
 | Oracle OCI Object Storage | Encrypted recovery/object archive | Adapter source; credentials and bucket unbound |
 | Google Drive | User-linked object store after OAuth consent | Candidate catalog only; no OAuth client or token in source |
-| MEGA, pCloud, Box | User-linked object store after provider-native authorization | Candidate catalog only; provider adapter and account binding unqualified |
+| MEGA, pCloud, Box | User-linked object store after provider-native authorization | MEGA native sign-in boundary is now bound through the approved Device Bridge; no active MEGA session or Continuum archive readback is qualified. pCloud/Box remain unbound |
 | Icedrive, Internxt | Candidate user-linked store | Contract/provider discovery required before implementation |
 | GitHub Releases | Versioned source packages, manifests and bounded encrypted release evidence | Manifest contract only; not live private storage |
 
@@ -38,7 +38,7 @@ window.LeeWayContinuumBridge.startStorageOnboarding({providerId})
 
 The host, not browser JavaScript, must validate the provider ID, create state and PKCE, open the provider-native consent flow, store the resulting session in the approved vault, and return only a safe status or an allowlisted HTTPS redirect. The browser must never receive a password, refresh token, access token, client secret or provider credential. If the bridge is absent, the screen reports that setup is unavailable and performs no account action.
 
-The source-qualified host seam is `src/storage/storage-onboarding-bridge.mjs`. It validates the `leeway.continuum` owner/body scope, forwards only the provider ID plus non-secret authority metadata to an injected host callback, rejects secret-bearing requests and results, and fails closed when the consent/vault adapter is not bound. It does not create credentials, a database, a provider account, or a second authority. The currently running local carrier has not yet bound this seam; source qualification is not live-provider qualification.
+The source-qualified host seam is `src/storage/storage-onboarding-bridge.mjs`. It validates the `leeway.continuum` owner/body scope, forwards only the provider ID plus non-secret authority metadata to an injected host callback, rejects secret-bearing requests and results, and fails closed when the consent/vault adapter is not bound. It does not create credentials, a database, a provider account, or a second authority. The approved native host now binds the MEGA provider-native client boundary: it detects the official MEGAcmd installation, probes only a redacted session classification, and opens the official sign-in surface when required. This is still not live-provider qualification; MEGA remains pending until the owner session and encrypted Continuum archive readback are independently observed.
 
 This is a convenience layer over the existing governed contracts, not a new control plane, account provisioner, database or provider authority.
 
@@ -50,4 +50,4 @@ The canonical local Continuum scope remains usable offline. Remote providers are
 
 ## Current gate
 
-The provider catalog and policy tests are source-level only. Google Drive, MEGA, pCloud, Box, Icedrive, Internxt, R2 and OCI remain unbound in this branch. No user account was accessed, no credential was generated, and no provider write was attempted.
+The provider catalog and policy tests are source-level only. MEGA's native sign-in boundary is host-bound but currently reports `NO_ACTIVE_MEGA_SESSION`; Google Drive, pCloud, Box, Icedrive, Internxt, R2 and OCI remain unbound. No user account was accessed by LeeWay, no credential was generated, and no provider write was attempted.
