@@ -12,7 +12,11 @@ import {assertContinuumAuthorityRef,CONTINUUM_AUTHORITY_REF,CONTINUUM_AUTHORITY_
 const fail = message => { throw Object.assign(new Error(message),{code:message}); };
 const id = value => typeof value==='string' && /^[A-Za-z0-9_.:@/-]{1,256}$/.test(value);
 const SECRET_KEYS = new Set(['password','clientSecret','accessToken','refreshToken','privateKey','apiKey','sessionToken','credentials']);
-const STATUSES = new Set(['UNBOUND','BOUND_SOURCE_ONLY','RUNTIME_OBSERVED','INDEPENDENTLY_VERIFIED']);
+// A descriptor is source metadata, never a host attestation.
+const STATUSES = new Set(['UNBOUND','BOUND_SOURCE_ONLY']);
+const INPUT_KEYS = new Set(['providerId','ownerId','bodyId','resourceId','status','credentialBindingRef','authorityRef']);
+const DESCRIPTOR_KEYS = new Set([...INPUT_KEYS,'category','role','auth','offlineReady','writeMode','authorityMode','scopeKind','credentialSource','createsDatabase','grantsContinuumAuthority','productionQualified']);
+const safeFields = (input,allowed) => Object.keys(input).every(key => allowed.has(key));
 
 const DEFINITIONS = Object.freeze([
   Object.freeze({providerId:'local-continuum',category:'CANONICAL_LOCAL_BINDING',role:'CANONICAL_RECORDS',auth:'HOST_BOUND_SCOPE',offlineReady:true,writeMode:'CONTINUUM_GOVERNED'}),
@@ -28,8 +32,8 @@ const DEFINITIONS = Object.freeze([
 ]);
 const DEFINITION_MAP = new Map(DEFINITIONS.map(definition=>[definition.providerId,definition]));
 
-function validateInput(input) {
-  if(!input || typeof input!=='object' || Array.from(Object.keys(input)).some(key=>SECRET_KEYS.has(key))) {
+function validateInput(input,{descriptor=false}={}) {
+  if(!input || typeof input!=='object' || Array.isArray(input) || !safeFields(input,descriptor?DESCRIPTOR_KEYS:INPUT_KEYS) || Array.from(Object.keys(input)).some(key=>SECRET_KEYS.has(key))) {
     fail('CONTINUUM_PROVIDER_DESCRIPTOR_SECRET_INPUT_FORBIDDEN');
   }
   try { assertContinuumAuthorityRef(input.authorityRef??CONTINUUM_AUTHORITY_REF); }
@@ -68,7 +72,7 @@ export function createStorageProviderDescriptor(input={}) {
 }
 
 export function assertProviderDescriptor(descriptor) {
-  const definition=validateInput(descriptor);
+  const definition=validateInput(descriptor,{descriptor:true});
   if(descriptor.authorityRef!==CONTINUUM_AUTHORITY_REF || descriptor.role!==definition.role ||
     descriptor.category!==definition.category || descriptor.grantsContinuumAuthority===true ||
     descriptor.createsDatabase===true) fail('CONTINUUM_PROVIDER_DESCRIPTOR_POLICY_INVALID');
