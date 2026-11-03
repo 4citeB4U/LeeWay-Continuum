@@ -31,6 +31,17 @@ No runtime process, owner store, credential, database, replication channel, or p
 - `npm run check:syntax`: passed.
 - `git diff --check`: passed.
 - Authority negative tests reject `pc-primary`, `phone-fold6`, `windows`, `android`, `github`, and storage resource labels as authority references.
+- Pull request #10: https://github.com/4citeB4U/LeeWay-Continuum/pull/10.
+- Remote source-only CI for commit `69508a5698ec15accc36ada517871e88231808c8` passed on Linux, Windows, and macOS: https://github.com/4citeB4U/LeeWay-Continuum/actions/runs/41585080653.
+
+## Observed host boundary
+
+The existing PC carrier was inspected read-only and was not restarted or mutated during this repair. Its previously loaded runtime still reports `ownerId=pc-primary` and `bodyId=pc-primary`; those values are retained as body-local access/placement scope, not as the Continuum authority. The running source file hashes observed at inspection were:
+
+- `machine-consciousness/carrier-server.mjs`: `8131B7AF76E8488E8CCE19E16B041C269AD1CC7F9AB9F5B73FFEDF14C4902D24`
+- `machine-consciousness/pc-continuum.mjs`: `86D316AA9BED82C0F6C7ACD587DC1BF1A3C61B79322D4B9BE07680181533DF04`
+
+The repaired source is therefore source- and CI-qualified, but is not yet runtime-observed on that carrier. Activation requires the approved restart workflow and a fresh authenticated readback.
 
 ## Remaining live gates
 
@@ -40,6 +51,6 @@ No runtime process, owner store, credential, database, replication channel, or p
 
 ## Evidence state
 
-`SOURCE_VERIFIED`: yes. `CI_VERIFIED`: local suite yes; remote CI pending after push. `RUNTIME_OBSERVED`: existing PC Continuum remains observed under the prior source; repaired contract not loaded. `INDEPENDENTLY_VERIFIED`: pending. `PRODUCTION_ACCEPTED`: no.
+`SOURCE_VERIFIED`: yes. `CI_VERIFIED`: local suite yes; remote Linux/Windows/macOS source-only CI yes. `RUNTIME_OBSERVED`: existing PC Continuum remains observed under the prior source; repaired contract not loaded. `INDEPENDENTLY_VERIFIED`: pending. `PRODUCTION_ACCEPTED`: no.
 
 `RECEIPT NOT CREATED; LEARNING LEDGER NOT UPDATED.`
