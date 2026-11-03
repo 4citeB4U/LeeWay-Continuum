@@ -21,11 +21,13 @@ const keyOk=k=>typeof k==='string'&&/^[a-f0-9]{64}$/.test(k);
 export async function openOwnerLocalStorage({root,ownerId,bodyId,authorize,maxChunkBytes=4*1024*1024}={}){
  if(typeof root!=='string'||!root.trim()||![ownerId,bodyId].every(ident)||typeof authorize!=='function'||
     !Number.isSafeInteger(maxChunkBytes)||maxChunkBytes<1||maxChunkBytes>4*1024*1024) fault('CONTINUUM_LOCAL_CONFIG_INVALID');
- const base=resolve(root);
- await mkdir(base,{recursive:true,mode:0o700});
- const rootStat=await lstat(base);
+ const requested=resolve(root);
+ await mkdir(requested,{recursive:true,mode:0o700});
+ const rootStat=await lstat(requested);
  if(rootStat.isSymbolicLink()||!rootStat.isDirectory())fault('CONTINUUM_LOCAL_ROOT_UNSAFE');
- if(await realpath(base)!==base)fault('CONTINUUM_LOCAL_ROOT_ALIAS_DENIED');
+ // Resolve case normalization (Windows) and ancestor aliases (/var on macOS) once.
+ // Reject symlinks at the selected root itself, then use its real path internally.
+ const base=await realpath(requested);
  const scopeHash=digest(Buffer.from(ownerId+'\0'+bodyId)),scope=join(base,scopeHash);
  await mkdir(scope,{recursive:true,mode:0o700});
  const si=await lstat(scope);
