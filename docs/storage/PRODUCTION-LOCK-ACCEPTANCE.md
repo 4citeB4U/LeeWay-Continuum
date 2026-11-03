@@ -10,6 +10,7 @@ AUTHORITY: Candidate contract only. LICENSE: Existing repository terms.
 
 ## Mandatory verified evidence before PRODUCTION_ACCEPTED
 
+- [ ] `leeway.continuum` is the explicit logical authority reference; device, OS, GitHub repository and subordinate storage resources are proven scopes/locations only.
 - [ ] Each new Agent Lee installs with a separate authenticated owner, Continuum namespace, Digital Brain and databases; no creator computer is required.
 - [ ] All durable application and Digital Brain reads/writes pass through Continuum, not direct engine access.
 - [ ] Exact Formula codec reconstruction and integrity, tampering, corruption, compression and byte-cost measurements pass.

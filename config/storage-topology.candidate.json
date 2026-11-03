@@ -4,7 +4,10 @@
   "status": "CANDIDATE_SOURCE_ONLY",
   "canonicalAuthority": {
     "component": "LeeWay Continuum",
+    "authorityRef": "leeway.continuum",
+    "authorityMode": "DEPLOYMENT_INDEPENDENT_LOGICAL_AUTHORITY",
     "scope": "OWNER_AND_BODY",
+    "scopeMeaning": "ACCESS_AND_PLACEMENT_SCOPE_ONLY; NOT CONTINUUM_AUTHORITY",
     "liveBinding": "NOT_PROBED",
     "originalRuntimePort": "127.0.0.1:8890",
     "verifiedSnapshot": "USER_PROVIDED_REPORT_ONLY"
@@ -12,6 +15,7 @@
   "databases": [
     {
       "id": "sqlite",
+      "authorityRef": "leeway.continuum",
       "role": "CANONICAL_RECORDS",
       "status": "EXISTING_LOCAL_PROVIDER_REPORTED",
       "module": "src/adapters/engine-adapters.mjs",
@@ -19,18 +23,21 @@
     },
     {
       "id": "duckdb",
+      "authorityRef": "leeway.continuum",
       "role": "DERIVED_ANALYTICS",
       "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
       "module": "src/adapters/engine-adapters.mjs"
     },
     {
       "id": "pouchdb",
+      "authorityRef": "leeway.continuum",
       "role": "OFFLINE_REPLICA",
       "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
       "module": "src/adapters/engine-adapters.mjs"
     },
     {
       "id": "electric_postgresql",
+      "authorityRef": "leeway.continuum",
       "role": "OPTIONAL_SYNC_TRANSPORT",
       "status": "ADAPTER_AVAILABLE_PROVIDER_UNBOUND",
       "module": "src/adapters/engine-adapters.mjs"
@@ -54,6 +61,62 @@
       "role": "RELEASE_PACKAGES_AND_ENCRYPTED_RELEASE_EVIDENCE_ONLY",
       "status": "RELEASE_MANIFEST_ONLY",
       "module": "src/storage/cloud-archives.mjs"
+    }
+  ],
+  "userLinkedProviderCandidates": [
+    {
+      "id": "google-drive",
+      "role": "USER_OBJECT_STORE",
+      "auth": "OAUTH2_USER_CONSENT",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "mega",
+      "role": "USER_OBJECT_STORE",
+      "auth": "PROVIDER_AUTH_CONTRACT_REQUIRED",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "pcloud",
+      "role": "USER_OBJECT_STORE",
+      "auth": "OAUTH2_USER_CONSENT",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "box",
+      "role": "USER_OBJECT_STORE",
+      "auth": "OAUTH2_USER_CONSENT",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "icedrive",
+      "role": "USER_OBJECT_STORE",
+      "auth": "PROVIDER_AUTH_CONTRACT_REQUIRED",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
+    },
+    {
+      "id": "internxt",
+      "role": "USER_OBJECT_STORE",
+      "auth": "PROVIDER_AUTH_CONTRACT_REQUIRED",
+      "status": "UNBOUND",
+      "module": "src/storage/provider-catalog.mjs",
+      "quota": "DISCOVER_AT_RUNTIME",
+      "offline": "CONTINUUM_LOCAL_SCOPE_REQUIRED"
     }
   ],
   "logicalCells": [

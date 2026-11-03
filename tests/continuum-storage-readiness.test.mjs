@@ -13,8 +13,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {evaluateContinuumStorageReadiness} from '../src/integration/storage-readiness.mjs';
 const ownerId='owner-fixture',bodyId='body-fixture';
-const registry=[{ownerId,bodyId,resourceId:'canonical-sqlite',kind:'sqlite',role:'CANONICAL',cells:['runtime-state','evidence-vault','memory','learning']}];
-const healthy=async ({resourceId,kind})=>({healthy:true,ownerId,bodyId,resourceId,kind,revision:'v1',readbackVerified:true,originalRuntimeBound:true});
+const authorityRef='leeway.continuum';
+const registry=[{authorityRef,ownerId,bodyId,resourceId:'canonical-sqlite',kind:'sqlite',role:'CANONICAL',cells:['runtime-state','evidence-vault','memory','learning']}];
+const healthy=async ({authorityRef,resourceId,kind})=>({healthy:true,authorityRef,ownerId,bodyId,resourceId,kind,revision:'v1',readbackVerified:true,originalRuntimeBound:true});
 test('no registered storage is not production ready',async()=>{
  const result=await evaluateContinuumStorageReadiness({ownerId,bodyId,registry:[],probe:healthy});
  assert.equal(result.basicReadiness,'BLOCKED');assert.equal(result.productionAccepted,false);

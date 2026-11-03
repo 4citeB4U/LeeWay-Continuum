@@ -13,6 +13,8 @@ LICENSE: MIT
 -->
 # Governed Continuum adapter matrix
 
+`leeway.continuum` is the deployment-independent logical authority reference. The `ownerId`, `bodyId`, device, OS, GitHub repository and storage resource shown below are scopes or locations only; none owns Continuum.
+
 | Consumer / provider | Connection contract | Current proof |
 |---|---|---|
 | Agent Lee and Digital Brain | Continuum owner-scoped status/search/getContent/ingest | Local connection historical; new package NOT rebound |

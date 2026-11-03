@@ -14,16 +14,16 @@ LICENSE: MIT
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGovernedCompartmentProvisioner} from '../governed-compartment-provision.mjs';
-const cell={ownerId:'owner-fixture',bodyId:'pc-fixture',cellId:'memory',providerId:'sqlite-main',revision:'v1',role:'CANONICAL'};
+const cell={authorityRef:'leeway.continuum',ownerId:'owner-fixture',bodyId:'pc-fixture',cellId:'memory',providerId:'sqlite-main',revision:'v1',role:'CANONICAL'};
 const policy={storageHighPercent:80,queueHighCount:100,writeP95HighMs:400,readP95HighMs:300,maxObservationAgeMs:60000};
-const metrics={ownerId:cell.ownerId,bodyId:cell.bodyId,cellId:cell.cellId,providerId:cell.providerId,revision:cell.revision,observedAtMs:999999,storageCapacityBytes:100,storageUsedBytes:90,queueDepth:0,writeP95Ms:10,readP95Ms:10};
+const metrics={authorityRef:cell.authorityRef,ownerId:cell.ownerId,bodyId:cell.bodyId,cellId:cell.cellId,providerId:cell.providerId,revision:cell.revision,observedAtMs:999999,storageCapacityBytes:100,storageUsedBytes:90,queueDepth:0,writeP95Ms:10,readP95Ms:10};
 const request={cell,metrics,policy,nowMs:1000000,requestId:'request-001'};
 function providerSet(calls,overrides={}){
  const providers={
  custody:{admit:async ({requestId,proposal})=>{calls.push('ADMIT');return {authorized:true,requestId,proposalSha256:proposal.proposalSha256};},assertSingleWriter:async()=>{calls.push('SINGLE_WRITER');}},
  veritas:{pre:async ({requestId,proposal})=>{calls.push('PRE');return {verified:true,kind:'PRE',requestId,proposalSha256:proposal.proposalSha256,proofId:'pre-fixture'};},post:async ({requestId,proposal})=>{calls.push('POST');return {verified:true,kind:'POST',requestId,proposalSha256:proposal.proposalSha256,proofId:'post-fixture',preProofId:'pre-fixture'};}},
- placement:{reserve:async ({requestId,proposal})=>{calls.push('RESERVE');return {requestId,proposalSha256:proposal.proposalSha256,ownerId:cell.ownerId,bodyId:cell.bodyId,cellId:cell.cellId,resourceId:'sqlite-shard-2'};},provision:async ({requestId})=>{calls.push('PROVISION');return {committed:true,requestId,resourceId:'sqlite-shard-2',source:cell};}},
- readback:{verify:async ({requestId})=>{calls.push('READBACK');return {verified:true,requestId,resourceId:'sqlite-shard-2',sourceRevision:cell.revision,ownerId:cell.ownerId,bodyId:cell.bodyId};}},
+ placement:{reserve:async ({requestId,proposal})=>{calls.push('RESERVE');return {requestId,proposalSha256:proposal.proposalSha256,authorityRef:cell.authorityRef,ownerId:cell.ownerId,bodyId:cell.bodyId,cellId:cell.cellId,resourceId:'sqlite-shard-2'};},provision:async ({requestId})=>{calls.push('PROVISION');return {committed:true,requestId,resourceId:'sqlite-shard-2',source:cell};}},
+ readback:{verify:async ({requestId})=>{calls.push('READBACK');return {verified:true,requestId,resourceId:'sqlite-shard-2',sourceRevision:cell.revision,authorityRef:cell.authorityRef,ownerId:cell.ownerId,bodyId:cell.bodyId};}},
  receipts:{append:async ({requestId})=>{calls.push('RECEIPT');return {committed:true,requestId,receiptId:'receipt-fixture'};}}
  };
  for(const [group,patch] of Object.entries(overrides))providers[group]={...providers[group],...patch};

@@ -11,6 +11,7 @@ HOW: Trusted-host provider injection, exact source scope and fail-closed operati
 AUTHORITY: SOURCE_CANDIDATE_ONLY; no production owner/Veritas admission, database provisioning or sync.
 LICENSE: MIT
 */
+import {assertContinuumAuthorityRef,CONTINUUM_AUTHORITY_REF,CONTINUUM_AUTHORITY_MODE} from '../authority/continuum-authority.mjs';
 const deny = reason => { throw Object.assign(new Error(reason), {code:reason}); };
 const valid = value => typeof value === 'string' && /^[A-Za-z0-9_.:/@-]{1,256}$/.test(value);
 const engines = Object.freeze({
@@ -27,7 +28,8 @@ function scopedContext(context, ownerId, bodyId, operation) {
   const need = operation === 'ingestFile' ? 'continuum.write' : 'continuum.read';
   if (!context.capabilities.includes(need)) deny('CONTINUUM_CAPABILITY_DENIED');
 }
-export function createContinuumEngineAdapter({kind,ownerId,bodyId,resourceId,authorize,handlers}={}) {
+export function createContinuumEngineAdapter({kind,ownerId,bodyId,resourceId,authorityRef=CONTINUUM_AUTHORITY_REF,authorize,handlers}={}) {
+  try { assertContinuumAuthorityRef(authorityRef); } catch { deny('CONTINUUM_ENGINE_AUTHORITY_INVALID'); }
   const definition = engines[kind];
   if (!definition || ![ownerId,bodyId,resourceId].every(valid) ||
       typeof authorize !== 'function' || !handlers || typeof handlers !== 'object') {
@@ -38,6 +40,7 @@ export function createContinuumEngineAdapter({kind,ownerId,bodyId,resourceId,aut
   }
   // Injection proves only a callable dependency, not live DB enrollment or valid production writes.
   const descriptor = Object.freeze({
+    authorityRef,authorityMode:CONTINUUM_AUTHORITY_MODE,scopeKind:'OWNER_BODY_SCOPE',
     kind,role:definition.role,resourceId,ownerId,bodyId,
     bindingState:'SOURCE_INJECTED_UNQUALIFIED',liveProbe:'NOT_PERFORMED',
     createsDatabase:false,replicationQualified:false
@@ -47,7 +50,7 @@ export function createContinuumEngineAdapter({kind,ownerId,bodyId,resourceId,aut
     scopedContext(context,ownerId,bodyId,operation);
     // The injected owner-controlled host validates signed principal and request provenance.
     // Never trust an HTTP caller's asserted context/capability string alone.
-    if(await authorize({kind,role:definition.role,resourceId,ownerId,bodyId,operation,context,request}) !== true) {
+    if(await authorize({authorityRef,kind,role:definition.role,resourceId,ownerId,bodyId,operation,context,request}) !== true) {
       deny('CONTINUUM_ENGINE_ADMISSION_DENIED');
     }
     return handlers[operation](request,context);
@@ -59,12 +62,13 @@ export const createDuckDbAnalyticsAdapter = args => createContinuumEngineAdapter
 export const createPouchDbOfflineAdapter = args => createContinuumEngineAdapter({...args,kind:'pouchdb'});
 export const createElectricPostgresAdapter = args => createContinuumEngineAdapter({...args,kind:'electric_postgresql'});
 
-export function createContinuumEngineCatalog({ownerId,bodyId,adapters=[]}={}) {
+export function createContinuumEngineCatalog({ownerId,bodyId,authorityRef=CONTINUUM_AUTHORITY_REF,adapters=[]}={}) {
+  try { assertContinuumAuthorityRef(authorityRef); } catch { deny('CONTINUUM_CATALOG_AUTHORITY_INVALID'); }
   if(![ownerId,bodyId].every(valid)||!Array.isArray(adapters))deny('CONTINUUM_CATALOG_SCOPE_REQUIRED');
   const catalog = new Map();
   for(const adapter of adapters) {
     const d=adapter?.descriptor;
-    if(!d || d.ownerId!==ownerId || d.bodyId!==bodyId || !valid(d.resourceId) ||
+    if(!d || d.authorityRef!==authorityRef || d.ownerId!==ownerId || d.bodyId!==bodyId || !valid(d.resourceId) ||
       !engines[d.kind] || d.role!==engines[d.kind].role || catalog.has(d.resourceId)) {
       deny('CONTINUUM_CATALOG_ADAPTER_INVALID');
     }

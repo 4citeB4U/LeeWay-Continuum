@@ -12,6 +12,7 @@ AUTHORITY: DIAGNOSTIC_SOURCE_ONLY. No allocation, DB creation, copy, replication
 LICENSE: MIT
 */
 import { createHash } from 'node:crypto';
+import {assertContinuumAuthorityRef,CONTINUUM_AUTHORITY_REF,CONTINUUM_AUTHORITY_MODE} from '../authority/continuum-authority.mjs';
 
 const code = message => Object.assign(new Error(message), { code: message });
 const nonempty = value => typeof value === 'string' && value.length <= 256 && /^[A-Za-z0-9_.:@/-]+$/.test(value);
@@ -26,6 +27,8 @@ const sha = value => createHash('sha256').update(JSON.stringify(value)).digest('
  * No user-defined request body or derived metric can become a storage authority.
  */
 export function planContinuumCapacity({cell, metrics, policy, nowMs} = {}) {
+  try { assertContinuumAuthorityRef(cell?.authorityRef); assertContinuumAuthorityRef(metrics?.authorityRef); }
+  catch { throw code('CONTINUUM_CAPACITY_AUTHORITY_INVALID'); }
   if (!cell || ![cell.ownerId, cell.bodyId, cell.cellId, cell.providerId, cell.revision].every(nonempty) ||
       !['CANONICAL', 'DERIVED'].includes(cell.role)) throw code('CONTINUUM_CAPACITY_CELL_INVALID');
   if (!policy || !boundedPercent(policy.storageHighPercent) || policy.storageHighPercent < 50 || policy.storageHighPercent > 95 ||
@@ -40,7 +43,7 @@ export function planContinuumCapacity({cell, metrics, policy, nowMs} = {}) {
       !nonempty(metrics.ownerId) || !nonempty(metrics.bodyId)) {
     throw code('CONTINUUM_CAPACITY_OBSERVATION_INVALID');
   }
-  if ([['ownerId',cell.ownerId],['bodyId',cell.bodyId],['cellId',cell.cellId],['providerId',cell.providerId],['revision',cell.revision]]
+  if ([['authorityRef',cell.authorityRef],['ownerId',cell.ownerId],['bodyId',cell.bodyId],['cellId',cell.cellId],['providerId',cell.providerId],['revision',cell.revision]]
     .some(([key,value]) => metrics[key] !== value)) throw code('CONTINUUM_CAPACITY_OBSERVATION_SCOPE_MISMATCH');
   const ageMs = nowMs - metrics.observedAtMs;
   const storagePercent = Number((metrics.storageUsedBytes * 100 / metrics.storageCapacityBytes).toFixed(3));
@@ -57,6 +60,7 @@ export function planContinuumCapacity({cell, metrics, policy, nowMs} = {}) {
   const decision = Object.freeze({
     state: stale ? 'UNVERIFIED_STALE_OBSERVATION' : requestedOperation === 'NONE' ? 'WITHIN_OBSERVED_BUDGET' : 'CAPACITY_ACTION_PROPOSED',
     requestedOperation,
+    authorityRef:CONTINUUM_AUTHORITY_REF,authorityMode:CONTINUUM_AUTHORITY_MODE,
     ownerId: cell.ownerId, bodyId: cell.bodyId, cellId: cell.cellId, providerId: cell.providerId,
     sourceRevision: cell.revision, sourceRole: cell.role,
     observedAtMs: metrics.observedAtMs, observationAgeMs: ageMs,

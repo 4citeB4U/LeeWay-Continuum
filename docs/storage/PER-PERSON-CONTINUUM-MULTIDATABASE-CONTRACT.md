@@ -14,10 +14,16 @@ LICENSE = Existing repository terms.
 # Per-person Continuum multi-database contract (candidate)
 
 ## Hard invariants
-- Every Agent Lee installation has its own cryptographically scoped owner identity, Continuum namespace, Digital Brain record set, and device-local database files. **Never** share raw files or keys between unrelated owners.
+- `leeway.continuum` is the deployment-independent logical authority. An owner identity, body, device, OS, repository, or storage resource is never Continuum's authority; `ownerId` and `bodyId` are access/placement scopes only.
+- Every Agent Lee installation may have its own cryptographically scoped owner namespace, Continuum scope, Digital Brain record set, and device-local storage binding. **Never** share raw files or keys between unrelated owners.
 - LeeWay applications, models, and Digital Brain read/write canonical durable information via Continuum service APIs; no application-specific bypass to SQLite, DuckDB, PouchDB, Google, or PostgreSQL.
 - Continuum is the logical data authority and metadata/receipt gate. Storage engines are subordinate replaceable adapters, not independent knowledge sources.
+- GitHub is canonical source/release infrastructure, not a durable database runtime. A self-hosted Continuum deployment may execute on any qualified host, provided its authority reference remains `leeway.continuum` and its physical resources remain subordinate.
 - Formula's exact lossless codec handles content-addressed archive representations, while condensed/lossy mathematical summaries are separate explicitly labeled projections.
+- User-linked cloud providers are optional subordinate object stores. They are connected only after provider-native consent or trusted-host enrollment, their quota and cost are discovered at runtime, and they never create a second Continuum authority.
+- A Google account is an identity and consent path; it does not silently provision Google Drive storage. Drive access requires a separately approved OAuth scope and user-owned Drive resource.
+- GitHub Releases may hold versioned manifests, packages and bounded encrypted release evidence. It is not the user's live private media vault or a replacement for Continuum persistence.
+- Offline operation uses the qualified local Continuum scope and its governed outbox/replica path. Provider links are optional synchronization targets; no separate provider-owned manifest database is introduced.
 - Existing Continuum SQLite and legacy raw records remain unchanged; qualified new codecs are versioned and must prove byte-exact reconstruction before acceptance.
 - LDWMD/VRAM Database handles transient tensor/device memory leases independently. Only selected durable checkpoint objects and their provenance go through Continuum, not every frame or allocator operation.
 - Device/OS/LLM neutrality: no single Windows laptop, phone, GPU, database server, Google account, model, or provider is required for local functional operation.
@@ -33,7 +39,7 @@ LICENSE = Existing repository terms.
 | Google Drive | Optional disabled-by-default archival transport; not the primary database | No |
 
 ## Lifecycle
-1. Provision distinct owner namespace, Digital Brain and Continuum storage on the device; maintain owner trust material separate from transferable data archives.
+1. Provision a distinct owner/body scope and Continuum storage binding at the qualified deployment location; maintain owner trust material separate from transferable data archives. The location is not the authority.
 2. Admit every canonical write using existing Continuum authorization and provenance.
 3. Formula segments/compresses according to actual content type and verifies exact byte recovery.
 4. Commit to owner-scoped canonical SQLite through Continuum and retain receipts.
