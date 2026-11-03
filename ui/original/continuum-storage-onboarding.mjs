@@ -11,7 +11,7 @@ const $=id=>document.getElementById(id);
 const dialog=$('storage-onboarding');
 const statusBox=$('storage-onboarding-status');
 const messageBox=$('storage-onboarding-message');
-const providerIds=new Set(['owner-local','google-drive','mega','pcloud','box','icedrive','internxt']);
+const providerIds=new Set(['local-continuum','google-drive','mega','pcloud','box','icedrive','internxt']);
 const apiRoot=new URL(document.querySelector('meta[name="continuum-api"]')?.content||'/api/continuum',location.href);
 
 function message(text,error=false){messageBox.textContent=text;messageBox.dataset.state=error?'error':'ok';}
@@ -22,10 +22,10 @@ function providerStateRows(status){
 }
 function renderObservedStatus(status){
   const rows=providerStateRows(status);
-  const local=rows.get('owner-local');
-  if(local?.state)setProviderState('owner-local',String(local.state));
-  else if(status?.initialized===true&&status?.state==='CONNECTED')setProviderState('owner-local','Available');
-  else setProviderState('owner-local','Needs setup');
+  const local=rows.get('local-continuum');
+  if(local?.state)setProviderState('local-continuum',String(local.state));
+  else if(status?.initialized===true&&status?.state==='CONNECTED')setProviderState('local-continuum','Available');
+  else setProviderState('local-continuum','Needs setup');
   for(const id of ['google-drive','mega','pcloud']){
     const row=rows.get(id);
     setProviderState(id,row?.state?String(row.state):'Not connected');
@@ -42,7 +42,7 @@ async function observeStatus(){
     const value=await response.json();
     if(!response.ok||value.ok===false)throw Error(value.error||'STATUS_UNAVAILABLE');
     renderObservedStatus(value.result??value);
-  }catch{statusBox.textContent='This installation has not exposed a live storage status yet.';setProviderState('owner-local','Needs setup');}
+  }catch{statusBox.textContent='This installation has not exposed a live storage status yet.';setProviderState('local-continuum','Needs setup');}
 }
 async function requestConnection(providerId){
   if(!providerIds.has(providerId)){message('That storage choice is not recognized.',true);return;}

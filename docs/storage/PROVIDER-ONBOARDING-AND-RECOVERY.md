@@ -38,6 +38,8 @@ window.LeeWayContinuumBridge.startStorageOnboarding({providerId})
 
 The host, not browser JavaScript, must validate the provider ID, create state and PKCE, open the provider-native consent flow, store the resulting session in the approved vault, and return only a safe status or an allowlisted HTTPS redirect. The browser must never receive a password, refresh token, access token, client secret or provider credential. If the bridge is absent, the screen reports that setup is unavailable and performs no account action.
 
+The source-qualified host seam is `src/storage/storage-onboarding-bridge.mjs`. It validates the `leeway.continuum` owner/body scope, forwards only the provider ID plus non-secret authority metadata to an injected host callback, rejects secret-bearing requests and results, and fails closed when the consent/vault adapter is not bound. It does not create credentials, a database, a provider account, or a second authority. The currently running local carrier has not yet bound this seam; source qualification is not live-provider qualification.
+
 This is a convenience layer over the existing governed contracts, not a new control plane, account provisioner, database or provider authority.
 
 ## Capacity and recovery

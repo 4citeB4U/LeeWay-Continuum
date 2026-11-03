@@ -11,7 +11,7 @@ test('one-screen storage onboarding is present without replacing the original UI
   assert.match(html,/id="connect-storage"/);
   assert.match(html,/id="storage-onboarding"/);
   assert.match(html,/continuum-storage-onboarding\.mjs/);
-  for(const provider of ['owner-local','google-drive','mega','pcloud'])assert.match(html,new RegExp(`data-provider="${provider}"`));
+  for(const provider of ['local-continuum','google-drive','mega','pcloud'])assert.match(html,new RegExp(`data-provider="${provider}"`));
 });
 
 test('onboarding delegates only provider identity to the approved host bridge',()=>{
