@@ -27,3 +27,17 @@ test('provider descriptors reject secrets and invalid authority',()=>{
   assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'google-drive',authorityRef:'pc-primary'}),/AUTHORITY_INVALID/);
   assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'google-drive',status:'RUNTIME_OBSERVED'}),/RESOURCE_REQUIRED/);
 });
+
+test('untrusted descriptors cannot carry unrecognized or nested secrets',()=>{
+  const clean=createStorageProviderDescriptor({...scope,providerId:'mega'});
+  assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'mega',metadata:{accessToken:'secret'}}),/SECRET_INPUT_FORBIDDEN/);
+  assert.throws(()=>assertProviderDescriptor({...clean,metadata:{accessToken:'secret'}}),/SECRET_INPUT_FORBIDDEN/);
+  assert.throws(()=>assertProviderDescriptor({...clean,oauthToken:'secret'}),/SECRET_INPUT_FORBIDDEN/);
+});
+test('source-only descriptors cannot forge runtime or independent verification',()=>{
+  for(const status of ['RUNTIME_OBSERVED','INDEPENDENTLY_VERIFIED']){
+    assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'mega',resourceId:'fake',status}),/DESCRIPTOR_INVALID/);
+    const clean=createStorageProviderDescriptor({...scope,providerId:'mega'});
+    assert.throws(()=>assertProviderDescriptor({...clean,resourceId:'fake',status}),/DESCRIPTOR_INVALID/);
+  }
+});
