@@ -1,0 +1,36 @@
+# LEEWAY HEADER — DO NOT REMOVE
+# REGION: LEEWAY.CONTINUUM.DATA_FABRIC.CI
+# TAG: LEEWAY.CONTINUUM.LIVE_DATA_FABRIC_CONTRACT.CI.V1
+# DISCOVERY_PIPELINE: Voice -> Intent -> Location -> Vertical -> Ranking -> Render
+# 5WH:
+# WHAT = Run read-only canonical database provider qualification contract fixtures.
+# WHY = Separate source CI from live owner and Veritas evidence.
+# WHO = LeeWay Industries / owner-authorized maintainers
+# WHERE = .github/workflows/live-data-fabric-contract.yml
+# WHEN = 2026-10-28
+# HOW = Read-only CI Node test, no secrets, networking or mutable database fixtures.
+# AUTHORITY: Synthetic source contract CI only.
+# LICENSE: MIT
+name: Continuum live data-fabric contract
+on:
+  pull_request:
+    paths:
+      - 'src/integration/qualify-live-data-fabric.mjs'
+      - 'src/integration/tests/qualify-live-data-fabric.test.mjs'
+      - '.github/workflows/live-data-fabric-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  read-only-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify syntax
+        run: node --check src/integration/qualify-live-data-fabric.mjs
+      - name: Verify owner scope, existing SQLite and read-only boundaries
+        run: node --test src/integration/tests/qualify-live-data-fabric.test.mjs
