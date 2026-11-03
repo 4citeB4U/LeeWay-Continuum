@@ -25,7 +25,7 @@ test('GitHub is release infrastructure, never a live user object store',()=>{
 test('provider descriptors reject secrets and invalid authority',()=>{
   assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'mega',accessToken:'never'}),/SECRET_INPUT_FORBIDDEN/);
   assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'google-drive',authorityRef:'pc-primary'}),/AUTHORITY_INVALID/);
-  assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'google-drive',status:'RUNTIME_OBSERVED'}),/RESOURCE_REQUIRED/);
+  assert.throws(()=>createStorageProviderDescriptor({...scope,providerId:'google-drive',status:'BOUND_SOURCE_ONLY'}),/RESOURCE_REQUIRED/);
 });
 
 test('untrusted descriptors cannot carry unrecognized or nested secrets',()=>{
