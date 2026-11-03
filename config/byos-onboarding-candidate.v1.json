@@ -1,0 +1,84 @@
+{
+  "schema": "leeway.continuum.byos-onboarding-candidate.v1",
+  "status": "SOURCE_CANDIDATE_NO_LIVE_CLOUD_ENROLLMENT",
+  "identity": {
+    "mode": "OWNER_CHOICE",
+    "defaultEmail": null,
+    "googleSignIn": "OPTIONAL_SEPARATE_IDENTITY_PROVIDER",
+    "emailAddressIsNotCloudAuthorization": true,
+    "neverCreateThirdPartyAccountsSilently": true
+  },
+  "tiers": [
+    {
+      "id": "owner-local",
+      "role": "MANDATORY_DURABLE_LOCAL_BACKING_CANDIDATE",
+      "implementation": "src/storage/owner-local-storage.mjs",
+      "requiredUserAction": "CHOOSE_APPROVED_LOCAL_ROOT",
+      "status": "REAL_FILESYSTEM_SOURCE_AND_TEMP_FIXTURE_TESTS_ONLY"
+    },
+    {
+      "id": "mega",
+      "role": "OPTIONAL_ENCRYPTED_CLOUD_RECOVERY",
+      "provider": "MEGAcmd_OR_APPROVED_SDK",
+      "requiredUserAction": "EXPLICIT_PROVIDER_SIGN_IN_AND_SESSION_GRANT",
+      "status": "ACCOUNT_SCREENSHOT_OBSERVED_UNBOUND_TO_CONTINUUM"
+    },
+    {
+      "id": "google-drive",
+      "role": "OPTIONAL_GOOGLE_DRIVE_ARCHIVE_NOT_GMAIL",
+      "provider": "GOOGLE_DRIVE_API",
+      "requiredUserAction": "SEPARATE_OAUTH_SCOPE_APPROVAL",
+      "status": "NOT_CONNECTED",
+      "note": "Google account identity, Gmail mailbox and Drive storage are separate products/permissions"
+    },
+    {
+      "id": "github-release",
+      "role": "APPROVED_VERSIONED_RELEASES_AND_ENCRYPTED_EVIDENCE_ONLY",
+      "provider": "GITHUB_RELEASES",
+      "requiredUserAction": "EXPLICIT_OWNER_REPO_AND_PERMISSION",
+      "status": "SOURCE_MANIFEST_ONLY"
+    },
+    {
+      "id": "internxt",
+      "role": "OPTIONAL_ENCRYPTED_ARCHIVE_CANDIDATE",
+      "provider": "INTERNXT_OFFICIAL_CLI",
+      "requiredUserAction": "EXPLICIT_ACCOUNT_LOGIN",
+      "status": "UNQUALIFIED",
+      "note": "1 GB free baseline, CLI/WebDAV available"
+    },
+    {
+      "id": "icedrive",
+      "role": "MANUAL_ARCHIVE_CANDIDATE_ONLY",
+      "provider": "ICEDRIVE_NATIVE_APP",
+      "requiredUserAction": "EXPLICIT_ACCOUNT_LOGIN",
+      "status": "UNQUALIFIED_NEW_USERS_NO_WEBDAV",
+      "note": "Icedrive disabled WebDAV for new users from 2026-04-15"
+    }
+  ],
+  "invariants": [
+    "ONE_PROVEN_CANONICAL_WRITER",
+    "OWNER_SCOPED_KEYS",
+    "NO_PLAINTEXT_REMOTE_BACKUP",
+    "NO_HARDCODED_IDENTITIES",
+    "NO_PROVIDER_ACCOUNT_CREATION_BY_EMAIL_ALONE",
+    "NO_UNVERIFIED_CAPACITY_SUMS",
+    "NO_CACHE_EVICTION_OF_SOLE_RECOVERABLE_COPY",
+    "NO_AUTOMATED_CAPTCHA_OR_MFA_BYPASS",
+    "NO_UNBOUNDED_COSTS_OR_QUOTA_CIRCUMVENTION",
+    "NO_GITHUB_PERSONAL_DB_BACKUPS",
+    "ONLY_REAL_ENROLLED_CLIENTS_REPORT_CONNECTED"
+  ],
+  "activationAcceptance": [
+    "CANONICAL_ORIGINAL_HOST_PINNED",
+    "LOCAL_REAL_BYTES_READBACK_AND_RESTART",
+    "MEGA_OWNER_SIGNIN_GRANT",
+    "ENCRYPTED_TEST_FILE_UPLOAD_DOWNLOAD_SHA",
+    "GOOGLE_DRIVE_USER_OAUTH_CONSENT_IF_SELECTED",
+    "VERITAS_AND_RECEIPT_REAL_PRODUCTION_GATE"
+  ],
+  "physicalMegaConnected": false,
+  "googleDriveConnected": false,
+  "githubBackupConnected": false,
+  "originalWindowsHostReached": false,
+  "productionAccepted": false
+}
