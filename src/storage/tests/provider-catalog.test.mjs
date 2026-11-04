@@ -6,7 +6,7 @@ const scope={ownerId:'creator-scope',bodyId:'body-fold6'};
 
 test('provider catalog separates subordinate stores from Continuum authority',()=>{
   const ids=listStorageProviderDefinitions().map(item=>item.providerId);
-  assert.deepEqual(ids,['local-continuum','cloudflare-r2','oracle-oci-object','google-drive','mega','pcloud','box','icedrive','internxt','github-release']);
+  assert.deepEqual(ids,['local-continuum','cloudflare-r2','oracle-oci-object','google-drive','mega','pcloud','icedrive','internxt','github-release']);
   const descriptor=createStorageProviderDescriptor({...scope,providerId:'google-drive'});
   assert.equal(descriptor.authorityRef,'leeway.continuum');
   assert.equal(descriptor.auth,'OAUTH2_USER_CONSENT');

@@ -25,7 +25,6 @@ const DEFINITIONS = Object.freeze([
   Object.freeze({providerId:'google-drive',category:'USER_LINKED_CLOUD',role:'USER_OBJECT_STORE',auth:'OAUTH2_USER_CONSENT',offlineReady:false,writeMode:'USER_AUTHORIZED_OBJECT'}),
   Object.freeze({providerId:'mega',category:'USER_LINKED_CLOUD',role:'USER_OBJECT_STORE',auth:'PROVIDER_AUTH_CONTRACT_REQUIRED',offlineReady:false,writeMode:'USER_AUTHORIZED_OBJECT'}),
   Object.freeze({providerId:'pcloud',category:'USER_LINKED_CLOUD',role:'USER_OBJECT_STORE',auth:'OAUTH2_USER_CONSENT',offlineReady:false,writeMode:'USER_AUTHORIZED_OBJECT'}),
-  Object.freeze({providerId:'box',category:'USER_LINKED_CLOUD',role:'USER_OBJECT_STORE',auth:'OAUTH2_USER_CONSENT',offlineReady:false,writeMode:'USER_AUTHORIZED_OBJECT'}),
   Object.freeze({providerId:'icedrive',category:'USER_LINKED_CLOUD',role:'USER_OBJECT_STORE',auth:'PROVIDER_AUTH_CONTRACT_REQUIRED',offlineReady:false,writeMode:'USER_AUTHORIZED_OBJECT'}),
   Object.freeze({providerId:'internxt',category:'USER_LINKED_CLOUD',role:'USER_OBJECT_STORE',auth:'PROVIDER_AUTH_CONTRACT_REQUIRED',offlineReady:false,writeMode:'USER_AUTHORIZED_OBJECT'}),
   Object.freeze({providerId:'github-release',category:'RELEASE_INFRASTRUCTURE',role:'VERSIONED_RELEASE_ARTIFACT_OR_ENCRYPTED_EVIDENCE',auth:'GITHUB_OWNER_AUTHORIZATION',offlineReady:false,writeMode:'RELEASE_ONLY'})

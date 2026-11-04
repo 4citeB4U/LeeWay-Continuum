@@ -12,8 +12,8 @@ const dialog=$('storage-onboarding');
 const statusBox=$('storage-onboarding-status');
 const messageBox=$('storage-onboarding-message');
 const moreProviders=$('storage-more-providers');
-const providerIds=new Set(['local-continuum','google-drive','mega','pcloud','box','icedrive','internxt']);
-const providerLabels=Object.freeze({'google-drive':'Google Drive',mega:'MEGA',pcloud:'pCloud',box:'Box',icedrive:'Icedrive',internxt:'Internxt','local-continuum':'This device'});
+const providerIds=new Set([...document.querySelectorAll('[data-provider]')].map(button=>button.dataset.provider).filter(providerId=>providerId&&providerId!=='more-storage'));
+const providerLabels=Object.freeze({'google-drive':'Google Drive',mega:'MEGA',pcloud:'pCloud',icedrive:'Icedrive',internxt:'Internxt','local-continuum':'Canonical Continuum'});
 const apiRoot=new URL(document.querySelector('meta[name="continuum-api"]')?.content||'/api/continuum',location.href);
 
 function message(text,error=false){messageBox.textContent=text;messageBox.dataset.state=error?'error':'ok';}
@@ -28,11 +28,12 @@ function renderObservedStatus(status){
   if(local?.state)setProviderState('local-continuum',String(local.state));
   else if(status?.initialized===true&&status?.state==='CONNECTED')setProviderState('local-continuum','Connected');
   else setProviderState('local-continuum','Needs setup');
-  for(const id of ['google-drive','mega','pcloud','box','icedrive','internxt']){
+  const visibleProviders=[...document.querySelectorAll('[data-provider-state]')].map(node=>node.dataset.providerState).filter(id=>id&&id!=='local-continuum'&&id!=='more-storage');
+  for(const id of visibleProviders){
     const row=rows.get(id);
     setProviderState(id,row?.state?String(row.state):'Not connected');
   }
-  const moreConnected=['pcloud','box','icedrive','internxt'].some(id=>rows.get(id)?.state==='CONNECTED');
+  const moreConnected=visibleProviders.some(id=>rows.get(id)?.state==='CONNECTED');
   setProviderState('more-storage',moreConnected?'Connected':'Choose a provider');
   const quota=status?.storageSummary;
   if(quota&&Number.isSafeInteger(quota.capacityBytes)&&Number.isSafeInteger(quota.usedBytes)){
@@ -56,7 +57,8 @@ async function requestConnection(providerId){
   }
   if(!providerIds.has(providerId)){message('That storage choice is not recognized.',true);return;}
   const bridge=window.LeeWayContinuumBridge??window.pywebview?.api;
-  const providerWindow=providerId==='local'?null:window.open('about:blank','leeway-provider-consent','popup,width=520,height=720');
+  const nativeBridge=typeof bridge?.startStorageOnboarding==='function';
+  const providerWindow=nativeBridge||providerId==='local-continuum'?null:window.open('about:blank','leeway-provider-consent','popup,width=520,height=720');
   message('Opening the provider’s secure sign-in…');
   try{
     let result;
@@ -72,8 +74,9 @@ async function requestConnection(providerId){
       message(result?.message||`The official ${label} sign-in page is opening. Sign in there, approve access, then return to this Continuum window. It will not show Connected until the approved adapter verifies the connection.`);
       const target=new URL(String(result.redirectUrl),location.href);
       if(target.protocol!=='https:'&&target.origin!==location.origin)throw Error('UNTRUSTED_ONBOARDING_REDIRECT');
+      if(nativeBridge){message(result?.message||'The official provider sign-in was requested outside Continuum. Finish it, then return here and press Connect again.');await observeStatus();return;}
       if(providerWindow&&!providerWindow.closed){providerWindow.location.replace(target.href);providerWindow.focus?.();return;}
-      location.assign(target.href);
+      message('Your browser blocked the provider window. Allow pop-ups for this Continuum address, then press Connect again.',true);
       return;
     }
     if(result?.state==='CONNECTED'||result?.state==='PENDING'){

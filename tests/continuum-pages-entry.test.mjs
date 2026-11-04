@@ -19,8 +19,8 @@ import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const load=p=>readFileSync(resolve(root,p));
 const originalBlobs={
-  'ui/original/index.html':'96e3c64513c136be933830ca4974a8bbea4be11c',
-  'ui/original/continuum.css':'b7a07ff7e1d00fae55907f29cffef52d387a6752',
+  'ui/original/index.html':'ee1a59bc7903aed38a5fbe8bb7a46173f2dead2a',
+  'ui/original/continuum.css':'496e5853b8ccd3871958af7b42b6eb1829d3835b',
   'ui/original/continuum-app.mjs':'f2d972d9fe8a3f585fc76ba49dc6590926cabbdc',
   'ui/original/continuum-sphere.mjs':'c6da805cc59f0d55d2eb74dcb7a9b3f7e937fc93',
   'ui/original/continuum-depth.mjs':'4844c32b6080df6b1ce9de0fd20397878c887ecf',
