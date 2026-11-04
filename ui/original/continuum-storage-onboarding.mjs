@@ -55,6 +55,7 @@ async function requestConnection(providerId){
   }
   if(!providerIds.has(providerId)){message('That storage choice is not recognized.',true);return;}
   const bridge=window.LeeWayContinuumBridge??window.pywebview?.api;
+  const providerWindow=providerId==='local'?null:window.open('about:blank','leeway-provider-consent','popup,width=520,height=720');
   message('Opening the provider’s secure sign-in…');
   try{
     let result;
@@ -69,15 +70,16 @@ async function requestConnection(providerId){
       message(result?.message||'The official provider sign-in page is opening. Continuum will not report a connection until its approved adapter completes.');
       const target=new URL(String(result.redirectUrl),location.href);
       if(target.protocol!=='https:'&&target.origin!==location.origin)throw Error('UNTRUSTED_ONBOARDING_REDIRECT');
-      const popup=window.open(target.href,'leeway-provider-consent','popup,width=520,height=720');
-      if(!popup)location.assign(target.href);return;
+      if(location.hostname==='127.0.0.1'||location.hostname==='localhost'){if(providerWindow&&!providerWindow.closed)providerWindow.close();location.assign(target.href);return;}
+      if(providerWindow&&!providerWindow.closed)providerWindow.location.replace(target.href);else location.assign(target.href);
+      return;
     }
     if(result?.state==='CONNECTED'||result?.state==='PENDING'){
       message(result?.message|| (result.state==='CONNECTED'?'Storage connected. Refreshing verified status…':'Finish the provider sign-in, then return here.'));
       await observeStatus();return;
     }
     message(result?.message||'The provider did not complete the connection. Your existing storage was not changed.',true);
-  }catch(error){message(error?.message==='UNTRUSTED_ONBOARDING_REDIRECT'?'The connection was blocked because its return address was not trusted.':'The secure connection could not be completed. Your existing storage was not changed.',true);}
+  }catch(error){if(providerWindow&&!providerWindow.closed)providerWindow.close();message(error?.message==='UNTRUSTED_ONBOARDING_REDIRECT'?'The connection was blocked because its return address was not trusted.':'The secure connection could not be completed. Your existing storage was not changed.',true);}
 }
 function open(){
   if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
