@@ -19,9 +19,9 @@
     {
       "id": "mega",
       "role": "OPTIONAL_ENCRYPTED_CLOUD_RECOVERY",
-      "provider": "MEGAcmd_OR_APPROVED_SDK",
+      "provider": "APPROVED_SDK_OR_WEB_SESSION_ADAPTER",
       "requiredUserAction": "EXPLICIT_PROVIDER_SIGN_IN_AND_SESSION_GRANT",
-      "status": "ACCOUNT_SCREENSHOT_OBSERVED_UNBOUND_TO_CONTINUUM"
+      "status": "WEB_SIGNIN_SURFACE_AVAILABLE_PROVIDER_ADAPTER_UNBOUND"
     },
     {
       "id": "google-drive",

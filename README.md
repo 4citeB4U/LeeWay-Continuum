@@ -19,6 +19,10 @@ LICENSE: MIT for new files; original module licenses and vendor notices are pres
 
 **STATUS: PUBLISHED SOURCE REPOSITORY. LIVE PRODUCTION INTEGRATION NOT YET QUALIFIED.**
 
+## Download the developer source
+
+The current qualified repair branch can be downloaded as a [source ZIP](https://github.com/4citeB4U/LeeWay-Continuum/archive/refs/heads/repair/deployment-independent-continuum-authority-20261103.zip). This is a developer source package, not a production installer: a standalone runtime still requires the approved host, owner enrollment, and provider adapters. GitHub is source and release infrastructure, not Continuum's live database.
+
 The GitHub repository is currently **PUBLIC** by the repository owner's choice. It contains source and documentation only; never publish live databases, credentials, owner records, Pocket ID identity stores, or encrypted archives that carry private identity data without an explicit access review.
 
 The original owner storage reported at 127.0.0.1:8890 remains unchanged. No live records,
