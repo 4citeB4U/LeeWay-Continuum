@@ -26,7 +26,7 @@ function renderObservedStatus(status){
   const rows=providerStateRows(status);
   const local=rows.get('local-continuum');
   if(local?.state)setProviderState('local-continuum',String(local.state));
-  else if(status?.initialized===true&&status?.state==='CONNECTED')setProviderState('local-continuum','Available');
+  else if(status?.initialized===true&&status?.state==='CONNECTED')setProviderState('local-continuum','Connected');
   else setProviderState('local-continuum','Needs setup');
   for(const id of ['google-drive','mega','pcloud','box','icedrive','internxt']){
     const row=rows.get(id);
