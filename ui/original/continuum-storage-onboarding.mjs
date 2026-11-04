@@ -66,6 +66,7 @@ async function requestConnection(providerId){
       result=value?.result??value;
     }
     if(result?.redirectUrl){
+      message(result?.message||'The official provider sign-in page is opening. Continuum will not report a connection until its approved adapter completes.');
       const target=new URL(String(result.redirectUrl),location.href);
       if(target.protocol!=='https:'&&target.origin!==location.origin)throw Error('UNTRUSTED_ONBOARDING_REDIRECT');
       const popup=window.open(target.href,'leeway-provider-consent','popup,width=520,height=720');
