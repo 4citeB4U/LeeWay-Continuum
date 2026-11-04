@@ -13,6 +13,7 @@ const statusBox=$('storage-onboarding-status');
 const messageBox=$('storage-onboarding-message');
 const moreProviders=$('storage-more-providers');
 const providerIds=new Set(['local-continuum','google-drive','mega','pcloud','box','icedrive','internxt']);
+const providerLabels=Object.freeze({'google-drive':'Google Drive',mega:'MEGA',pcloud:'pCloud',box:'Box',icedrive:'Icedrive',internxt:'Internxt','local-continuum':'This device'});
 const apiRoot=new URL(document.querySelector('meta[name="continuum-api"]')?.content||'/api/continuum',location.href);
 
 function message(text,error=false){messageBox.textContent=text;messageBox.dataset.state=error?'error':'ok';}
@@ -67,11 +68,12 @@ async function requestConnection(providerId){
       result=value?.result??value;
     }
     if(result?.redirectUrl){
-      message(result?.message||'The official provider sign-in page is opening. Continuum will not report a connection until its approved adapter completes.');
+      const label=providerLabels[providerId]||'provider';
+      message(result?.message||`The official ${label} sign-in page is opening. Sign in there, approve access, then return to this Continuum window. It will not show Connected until the approved adapter verifies the connection.`);
       const target=new URL(String(result.redirectUrl),location.href);
       if(target.protocol!=='https:'&&target.origin!==location.origin)throw Error('UNTRUSTED_ONBOARDING_REDIRECT');
-      if(location.hostname==='127.0.0.1'||location.hostname==='localhost'){if(providerWindow&&!providerWindow.closed)providerWindow.close();location.assign(target.href);return;}
-      if(providerWindow&&!providerWindow.closed)providerWindow.location.replace(target.href);else location.assign(target.href);
+      if(providerWindow&&!providerWindow.closed){providerWindow.location.replace(target.href);providerWindow.focus?.();return;}
+      location.assign(target.href);
       return;
     }
     if(result?.state==='CONNECTED'||result?.state==='PENDING'){
@@ -83,7 +85,7 @@ async function requestConnection(providerId){
 }
 function open(){
   if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
-  message('No password or API key is entered into this screen.');observeStatus();
+  message('Choose a provider to open its official sign-in. Sign in there, approve access, then return here. No password or API key is entered into Continuum.');observeStatus();
 }
 function close(){if(typeof dialog.close==='function'&&dialog.open)dialog.close();else dialog.removeAttribute('open');}
 $('connect-storage')?.addEventListener('click',open);
