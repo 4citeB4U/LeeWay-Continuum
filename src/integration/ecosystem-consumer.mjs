@@ -19,7 +19,7 @@ const digest=b=>createHash('sha256').update(b).digest('hex');
 export const LEEWAY_CONTINUUM_CONSUMERS=Object.freeze([
  'agent-lee','digital-brain','runtime-fabric','device-bridge','formula',
  'ldwmd','gpu','voice','rtc','vision','skills','model-hub',
- 'maps','logistics','pocket-id','agent-vt','receipt-ledger','learning-ledger'
+ 'maps','logistics','pocket-id','agent-vt','crm-erp','receipt-ledger','learning-ledger'
 ]);
 export function createContinuumConsumer({
   consumerId,ownerId,bodyId,authorityRef=CONTINUUM_AUTHORITY_REF,authorize,transport,writeEnabled=false
