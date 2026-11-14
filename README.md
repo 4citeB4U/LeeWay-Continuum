@@ -66,6 +66,7 @@ No credentials, plaintext backups or private source content belong in GitHub.
 - src/storage/cloud-archives.mjs — encryption-required R2/OCI archived chunks and hash readback
 - src/integration/canonical-host-binding.mjs — same-instance provider/owner source integration
 - src/integration/ecosystem-consumer.mjs — scoped clients for the remaining LeeWay services
+- src/identity/continuum-account-binding.mjs — verified-account portable custody and reconnect contract
 - compat/device-bridge/ — original Device Bridge binder and Pocket ID snapshot adapter
 - src/capacity/continuum-capacity-plan.mjs — measured pressure, proposal only
 - config/storage-topology.candidate.json — truthful unbound and optional states
