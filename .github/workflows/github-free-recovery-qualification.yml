@@ -21,6 +21,8 @@ on:
       - 'src/storage/owner-local-storage.mjs'
       - 'src/integration/device-rejoin-handoff.mjs'
       - 'src/integration/tests/device-rejoin-handoff.test.mjs'
+      - 'compat/runtime-fabric/continuum-routes.mjs'
+      - 'tests/continuum-device-rejoin-route.test.mjs'
       - 'package.json'
   workflow_dispatch:
 permissions:
@@ -41,7 +43,8 @@ jobs:
         run: |
           node --check scripts/qualify-github-free-recovery.mjs
           node --check src/integration/device-rejoin-handoff.mjs
-          node --test tests/github-free-recovery-ci.test.mjs src/storage/tests/owner-local-storage.test.mjs src/integration/tests/device-rejoin-handoff.test.mjs
+          node --check compat/runtime-fabric/continuum-routes.mjs
+          node --test tests/github-free-recovery-ci.test.mjs src/storage/tests/owner-local-storage.test.mjs src/integration/tests/device-rejoin-handoff.test.mjs tests/continuum-device-rejoin-route.test.mjs
       - name: Prepare small synthetic fixture on first real CPU runner
         run: |
           node scripts/qualify-github-free-recovery.mjs prepare "$RUNNER_TEMP/continuum-transport-fixture" > "$RUNNER_TEMP/source-readback.json"
