@@ -34,13 +34,15 @@ export function createContinuumDeviceRejoinHandoff({
  for(const fn of [authenticateOwner,enrollDevice,resolveOriginalContinuum,authorizeRestore,
    stageDeviceContent,readbackDeviceContent])
   if(typeof fn!=='function')fail('CONTINUUM_REJOIN_ORIGINAL_HOST_BINDINGS_REQUIRED');
- async function restoreOne({sessionRef,deviceId,bodyId,platform,recordId,workId}={}){
+ async function restoreOne({sessionRef,deviceId,bodyId,platform,recordId,workId,hostOwnerId=null}={}){
   if(![sessionRef,deviceId,bodyId,recordId,workId].every(id)||!platforms.has(platform))
     fail('CONTINUUM_REJOIN_REQUEST_INVALID');
   // Never accept a caller-supplied owner/issuer/scope as proof. Only the
   // injected trusted authenticator may provide verified identity.
   const account=await authenticateOwner({sessionRef,deviceId,bodyId,platform,workId});
   const binding=createContinuumAccountBinding({account,bodyId});
+  if(hostOwnerId!==null&&hostOwnerId!==binding.ownerId)
+    fail('CONTINUUM_REJOIN_HOST_OWNER_MISMATCH');
   const plan=planContinuumReconnect({account,bodyId});
   const enrollment=await enrollDevice({sessionRef,deviceId,bodyId,platform,
     ownerId:binding.ownerId,workId});
