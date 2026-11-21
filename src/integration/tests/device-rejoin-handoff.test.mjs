@@ -148,11 +148,8 @@ test('native stage denial returns reconciliation requirement, never an invented 
  });
 });
 test('invalid native platform or missing original provider callbacks fail closed',async()=>{
- await assert.rejects(createContinuumDeviceRejoinHandoff({
-  authenticateOwner:async()=>true}).restoreOne(request),/REJOIN_ORIGINAL_HOST_BINDINGS_REQUIRED/).catch(e=>{
-   // Factory throws synchronously; route is tested in the assertion immediately below.
-   assert.equal(e.code,'CONTINUUM_REJOIN_ORIGINAL_HOST_BINDINGS_REQUIRED');
- });
+ assert.throws(()=>createContinuumDeviceRejoinHandoff({
+  authenticateOwner:async()=>true}),/CONTINUUM_REJOIN_ORIGINAL_HOST_BINDINGS_REQUIRED/);
  await sandbox(async({callbacks})=>{
   const api=createContinuumDeviceRejoinHandoff(callbacks);
   await assert.rejects(api.restoreOne({...request,platform:'any'}),/CONTINUUM_REJOIN_REQUEST_INVALID/);
