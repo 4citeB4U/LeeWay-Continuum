@@ -1,4 +1,5 @@
-/* REGION: LEEWAY.CONTINUUM.ADAPTER; TAG: LEEWAY.CONTINUUM.HTTP.OWNER.ROUTES
+/* LEEWAY HEADER — DO NOT REMOVE
+REGION: LEEWAY.CONTINUUM.ADAPTER; TAG: LEEWAY.CONTINUUM.HTTP.OWNER.ROUTES
 WHAT: Serve the approved Continuum UI and one owner-scoped data contract inside an existing server.
 WHY: Human inspection and Agent Lee retrieval must share source identities.
 WHO: Leeway Industries / Creator-authorized Agent Lee. WHERE: Existing Runtime Fabric carrier or qualified host adapter.
@@ -24,7 +25,7 @@ export async function readBoundedJson(req,maxBytes=10000){
   for await(const chunk of req){const data=Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk);bytes+=data.length;if(bytes>maxBytes)throw Error('REQUEST_TOO_LARGE');chunks.push(data);}
   return JSON.parse(Buffer.concat(chunks).toString('utf8')||'{}');
 }
-export function createContinuumRoutes({resolveProvider,uiDirectory,uiPrefix='/continuum-ui/',apiPrefix='/api/continuum/',maxUploadBytes=16*1024*1024}){
+export function createContinuumRoutes({resolveProvider,uiDirectory,uiPrefix='/continuum-ui/',apiPrefix='/api/continuum/',maxUploadBytes=16*1024*1024,deviceRejoin=null}){
   if(typeof resolveProvider!=='function'||!uiDirectory)throw Error('CONTINUUM_BINDING_REQUIRED');
   return async function handleContinuum(req,res,url){
     const u=url||new URL(req.url,'http://localhost');if(!u.pathname.startsWith(uiPrefix)&&!u.pathname.startsWith(apiPrefix))return false;
@@ -49,9 +50,34 @@ export function createContinuumRoutes({resolveProvider,uiDirectory,uiPrefix='/co
         const requestId=u.searchParams.get('requestId');if(!requestId||!/^[a-zA-Z0-9_.:-]{16,128}$/.test(requestId))throw Error('CONTINUUM_REQUEST_ID_INVALID');
         const declared=Number(req.headers['content-length']||0);if(declared>maxUploadBytes)throw Error('CONTINUUM_UPLOAD_LIMIT');const chunks=[];let size=0;for await(const chunk of req){size+=chunk.length;if(size>maxUploadBytes)throw Error('CONTINUUM_UPLOAD_LIMIT');chunks.push(chunk);}
         result=await provider.ingestFile({bytes:Buffer.concat(chunks),title:u.searchParams.get('title'),mimeType:u.searchParams.get('mimeType')||'application/octet-stream',viewId:u.searchParams.get('viewId')||undefined,requestId,collection:'Owner imports',source:{kind:'OWNER_FILE_IMPORT',id:'owner-ui',bodyId:context.bodyId}},context);
+      }else if(req.method==='POST'&&route==='device-rejoin'){
+        // This route is unavailable unless the ORIGINAL trusted Runtime host
+        // injected its previously authorized native device/Continuum handoff.
+        if(typeof deviceRejoin?.restoreOne!=='function')throw Error('CONTINUUM_DEVICE_REJOIN_HOST_UNBOUND');
+        if(req.headers.origin!==origin||
+           req.headers['x-continuum-request']!=='owner-device-rejoin'||
+           req.headers['content-type']!=='application/json'){
+          json(res,403,{ok:false,error:'CONTINUUM_DEVICE_REJOIN_OWNER_ORIGIN_REQUIRED'});return true;
+        }
+        const request=await readBoundedJson(req,2048);
+        const allowedKeys=['sessionRef','deviceId','bodyId','platform','recordId','workId'];
+        if(!request||typeof request!=='object'||Array.isArray(request)||
+           Object.keys(request).length!==allowedKeys.length||
+           !allowedKeys.every(key=>typeof request[key]==='string'&&request[key].length>0)||
+           Object.keys(request).some(key=>!allowedKeys.includes(key)))
+          throw Error('CONTINUUM_DEVICE_REJOIN_REQUEST_INVALID');
+        if(typeof context.ownerId!=='string'||!context.ownerId.trim())
+          throw Error('CONTINUUM_DEVICE_REJOIN_OWNER_CONTEXT_UNVERIFIED');
+        // Never delegate identity/credential truth to browser request fields.
+        result=await deviceRejoin.restoreOne({...request,hostOwnerId:context.ownerId});
+        if(result?.ownerId!==context.ownerId||result?.targetBodyId!==request.bodyId||
+           result?.workId!==request.workId||
+           result?.state!=='ORIGINAL_PROVIDER_TO_ENROLLED_DEVICE_READBACK_MATCH'){
+          throw Error('CONTINUUM_DEVICE_REJOIN_RESULT_RECONCILIATION_REQUIRED');
+        }
       }else{json(res,405,{ok:false,error:'CONTINUUM_METHOD_NOT_ADMITTED'});return true;}
       json(res,200,{ok:true,result});
-    }catch(e){const reason=machineCode(e);const status=/DENIED|OUTSIDE_BODY|ORIGIN/.test(reason)?403:/NOT_FOUND/.test(reason)?404:/LIMIT|INVALID/.test(reason)?400:/UNBOUND|UNCALIBRATED|NOT_INITIALIZED/.test(reason)?503:409;const failure={ok:false,error:reason,completed:false};if(reason==='CONTINUUM_COMMITTED_UNVERIFIED'||reason==='CONTINUUM_RECONCILIATION_REQUIRED'){failure.committed=e.details?.committed===true;for(const field of ['requestId','recordId'])if(typeof e.details?.[field]==='string'&&/^[a-zA-Z0-9_.:-]{1,160}$/.test(e.details[field]))failure[field]=e.details[field];failure.reconciliationRequired=true;}json(res,status,failure);}
+    }catch(e){const reason=machineCode(e);const status=/DENIED|OUTSIDE_BODY|ORIGIN/.test(reason)?403:/NOT_FOUND/.test(reason)?404:/LIMIT|INVALID/.test(reason)?400:/UNBOUND|UNCALIBRATED|NOT_INITIALIZED/.test(reason)?503:409;const failure={ok:false,error:reason,completed:false};if(reason==='CONTINUUM_COMMITTED_UNVERIFIED'||reason==='CONTINUUM_RECONCILIATION_REQUIRED'||reason.startsWith('CONTINUUM_REJOIN_')&&reason.endsWith('_RECONCILIATION_REQUIRED')||reason==='CONTINUUM_DEVICE_REJOIN_RESULT_RECONCILIATION_REQUIRED'){failure.committed=e.details?.committed===true;for(const field of ['requestId','recordId'])if(typeof e.details?.[field]==='string'&&/^[a-zA-Z0-9_.:-]{1,160}$/.test(e.details[field]))failure[field]=e.details[field];failure.reconciliationRequired=true;}json(res,status,failure);}
     return true;
   };
 }
