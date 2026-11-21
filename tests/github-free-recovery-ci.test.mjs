@@ -19,6 +19,7 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {prepareSyntheticGithubRecovery,verifySyntheticGithubRecovery} from
  '../scripts/qualify-github-free-recovery.mjs';
+import {createContinuumAccountBinding,planContinuumReconnect} from '../src/identity/continuum-account-binding.mjs';
 async function fixture(action){
  const dir=await mkdtemp(join(tmpdir(),'continuum-github-ci-fixture-'));
  try{return await action(dir);}finally{await rm(dir,{recursive:true,force:true});}
@@ -33,6 +34,10 @@ test('two body scopes preserve exact bytes via original Continuum local storage 
   assert.equal(s.sourceBytes,t.targetBytes);
   assert.equal(t.separateBodyScopeVerified,true);
   assert.equal(t.foreignOwnerDenied,true);
+  assert.equal(s.sourcePlatform,'ANDROID');
+  assert.equal(t.targetPlatform,'IOS');
+  assert.equal(t.nativeAppleDigitalBrainCopied,false);
+  assert.equal(t.nativeDeviceConnectionEstablished,false);
   assert.equal(t.githubUsedAsOnlineBackend,false);
   assert.equal(t.canonicalReceiptIssued,false);
   assert.equal(t.privateOwnerPayloadHandled,false);
@@ -78,5 +83,36 @@ test('public test fixture is marked synthetic, not a Continuum database or produ
   assert.equal(m.executableServiceDeployed,false);
   assert.equal(s.productionQualified,false);
   assert.equal(s.persistentCpuServerProvided,false);
+ });
+});
+
+test('original OIDC account binding keeps owner across Android and iPhone but each has a distinct body',()=>{
+ const account={identityVerified:true,issuer:'https://identity-fixture.invalid',subject:'public-ci-fixture-owner'};
+ const android=createContinuumAccountBinding({account,bodyId:'ci-android-body'});
+ const iphone=createContinuumAccountBinding({account,bodyId:'ci-apple-body'});
+ assert.equal(android.ownerId,iphone.ownerId);
+ assert.notEqual(android.bodyId,iphone.bodyId);
+ assert.equal(planContinuumReconnect({account,bodyId:iphone.bodyId}).state,
+  'CONTINUUM_RECONNECT_PENDING_CANONICAL_READBACK');
+ assert.equal(planContinuumReconnect({account,bodyId:iphone.bodyId}).privateDataRead,false);
+ const other=createContinuumAccountBinding({account:{...account,subject:'different-user'},
+  bodyId:iphone.bodyId});
+ assert.notEqual(other.ownerId,iphone.ownerId);
+ assert.throws(()=>planContinuumReconnect({account:{...account,subject:'different-user'},
+  bodyId:iphone.bodyId,localBinding:android}),/CONTINUUM_LOCAL_CUSTODY_ACCOUNT_MISMATCH/);
+});
+test('Android-to-iOS Continuum test never copies native Digital Brain or claims actual device execution',async()=>{
+ await fixture(async dir=>{
+  await prepareSyntheticGithubRecovery(dir);
+  const m=JSON.parse(await readFile(join(dir,'manifest.json'),'utf8'));
+  assert.equal(m.sourcePlatform,'ANDROID');
+  assert.equal(m.targetPlatform,'IOS');
+  assert.equal(m.portablePayloadRole,'OWNER_SCOPED_CONTINUUM_CONTENT_ONLY');
+  assert.equal(m.sourceDigitalBrain,'RETAIN_LOCAL_DEVICE_BOUND');
+  assert.equal(m.targetDigitalBrain,'MUST_CREATE_SEPARATE_NATIVE_BINDING');
+  assert.equal(m.authenticationFixture,'SYNTHETIC_OIDC_NOT_REAL_LOGIN');
+  const altered={...m,targetPlatform:'WINDOWS'};
+  await writeFile(join(dir,'manifest.json'),JSON.stringify(altered));
+  await assert.rejects(verifySyntheticGithubRecovery(dir),/CONTINUUM_GITHUB_CI_MANIFEST_INVALID/);
  });
 });
