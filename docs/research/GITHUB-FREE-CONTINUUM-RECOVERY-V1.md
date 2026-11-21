@@ -46,14 +46,14 @@ GitHub Actions permitted scope: development, testing, deployment and publication
 
 Workflow: \`.github/workflows/github-free-recovery-qualification.yml\`. Every job uses actual standard \`ubuntu-latest\` CPU, five-minute job timeout, repository contents **read** permission, and one-day artifact retention. No uploaded secrets, user IDs, device files, phone photos, live Continuum DB, GitHub Deployments or live application service.
 
-Job 1 (source CPU):
+Job 1 (source CPU, synthetic Android body):
 1. Runs tests on unchanged original owner-local storage plus the new bounded drill.
 2. Opens original \`openOwnerLocalStorage\` on a temporary directory scoped to **synthetic owner/source body** with only fixture capabilities.
 3. Writes 64 KiB deterministic **explicitly synthetic public bytes**, reads them back, compares SHA256 and exact content.
 4. Emits a JSON test-only manifest with exact digest, byte count, synthetic owner/body scopes and \`CI_TRANSIENT_ARTIFACT_NOT_CONTINUUM\`.
 5. Publishes only \`fixture.bin\` and \`manifest.json\` as a transient GitHub Actions test artifact with \`retention-days: 1\`.
 
-Job 2 (different real CPU runner):
+Job 2 (different real CPU runner, synthetic iPhone body):
 1. Downloads that same-run synthetic test artifact, checks schema, owner/body identity, bytes and SHA256 before any target write.
 2. Reopens original \`openOwnerLocalStorage\` with **the same synthetic owner and a different synthetic body scope** in a clean ephemeral directory; writes and reads back the exact content.
 3. Probes wrong-owner read and asserts failure \`CONTINUUM_LOCAL_ACCESS_DENIED\`.
@@ -88,6 +88,24 @@ device-local Brain       same original Formula software GPU on available CPU/RAM
 GitHub participates at the **software source/build/release/restore testing** lane, not as that private tenant CPU service or as the durable identity/Continuum owner. On-demand production calculations run on an **authorized host CPU**, which may be the user's current device or a separate real server with adequate resources. A device changing or going offline must not result in an impersonated second Agent Lee or unauthorized replica writer.
 
 When a browser extension can reach only GitHub Pages, it may render the static LeeWay Tablet and explain an unavailable runtime, or show consent-based offline functionality. It cannot manufacture live CPU service solely because a GitHub-hosted CI runner was previously successful. The eventual signed release/source manifest can bootstrap an approved client, but active private Continuum sync and processing require separately qualified original runtime paths and private storage.
+
+## GitHub Copilot and device-compatibility workflow — Creator's continuation
+
+**Source-of-truth versus device authority.** GitHub holds versioned source, signed/hashed release manifests, CI results and reviewed portable recovery packages. It does not directly own or enumerate the USB peripherals physically attached to the Creator's Windows PC. Device Bridge, the OS, iOS app and Android app retain the real device-to-device transport, consent and native API authority. Original Continuum retains owner-scoped state and its durable approved storage. This works as GitHub-coordinated development and qualification, not an alternative device network or production remote filesystem.
+
+**Android to Apple in this PR:** CI fixtures now use the existing `createContinuumAccountBinding()` for one *synthetic* OIDC issuer/subject across two distinct bodies, `ci-android-body` and `ci-apple-body`. The owner-derived scope is exactly the same; body IDs remain distinct. The transferred 64 KiB is `OWNER_SCOPED_CONTINUUM_CONTENT_ONLY`. Original Android Digital Brain remains device-local; native iPhone Digital Brain must be newly initialized from Apple-supported observations. A source manifest claiming an alternate target platform, false service deployment or different owner/body is rejected. No real login took place; the fixture's `identityVerified:true` is test input, not authentication evidence.
+
+**GitHub's testable role:**
+- Standard Linux/Windows/macOS hosted CI: portable Formula, Continuum and extension source tests, compatible library builds and release checks. CI platform names do not imply direct physical USB access.
+- Optional emulators/simulators: Android and iOS app build/simulation validation when runner image/dependencies allow; simulator SUCCESS never qualifies a physical Samsung Fold6 or iPhone 11.
+- Original local VS Code Copilot + authenticated Device Bridge: physical ADB/Apple lockdown app lifecycle, identity, owner-authorized native Diagnostics/Continuum readback, USB connect/reconnect, real Formula CPU measurements and runtime error receipt references.
+- GitHub Copilot code review/coding agent: independently inspect source/CI diffs and propose patches, **only if the actual Copilot plan and AI credit allowance make the action no-cost under Creator's free-only instruction**. Official GitHub docs (as of 2026-11-21) describe cloud agent access as paid-plan dependent since 2026-10-28 and AI credits consumed for coding-agent operations. Do not auto-request premium Copilot sessions or purchase credits. Free GitHub Actions CPU does **not** make Copilot's LLM inference free.
+
+**Security: no public-repository self-hosted runner on the Creator's PC.** GitHub warns that a self-hosted runner attached to a public repository can execute untrusted PR code with machine access. Do not expose private host USB devices, user files or owner credentials through untrusted Actions workflows. A future separately approved protected ephemeral runner or read-only mediated Bridge testing path requires explicit owner authorization, correctly scoped repository trust, and independent refusal tests. No such runner is installed by this PR.
+
+**Actual owner-device cross-platform acceptance (separate from CI):** A verified owner signs in to an Android client; original Continuum writes approved portable state to authorized private durability; the same owner signs in on iPhone; the iPhone receives a distinct approved Device Bridge enrollment and fresh native Digital Brain; original Continuum reads back the exact scoped portable bytes; owner mismatch fails; independent receipt custody is reconciled; a permitted Formula CPU task can resume with its original workId. These steps remain NOT_EXECUTED by the GitHub CI drill. Original live dual-phone evidence and outstanding MCP admission are in [Device Bridge draft PR #128](https://github.com/4citeB4U/LEEWAY-DEVICE-BRIDGE/pull/128).
+
+**Primary references:** https://docs.github.com/en/actions/reference/security/secure-use; https://docs.github.com/en/actions/reference/runners/self-hosted-runners; https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-on-github; https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing; https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features.
 
 ## Independent acceptance and scientific falsification
 
