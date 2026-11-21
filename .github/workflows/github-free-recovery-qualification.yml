@@ -19,6 +19,9 @@ on:
       - '.github/workflows/github-free-recovery-qualification.yml'
       - 'docs/research/GITHUB-FREE-CONTINUUM-RECOVERY-V1.md'
       - 'src/storage/owner-local-storage.mjs'
+      - 'src/integration/device-rejoin-handoff.mjs'
+      - 'src/integration/tests/device-rejoin-handoff.test.mjs'
+      - 'package.json'
   workflow_dispatch:
 permissions:
   contents: read
@@ -37,7 +40,8 @@ jobs:
       - name: Original Continuum source unit and negative tests
         run: |
           node --check scripts/qualify-github-free-recovery.mjs
-          node --test tests/github-free-recovery-ci.test.mjs src/storage/tests/owner-local-storage.test.mjs
+          node --check src/integration/device-rejoin-handoff.mjs
+          node --test tests/github-free-recovery-ci.test.mjs src/storage/tests/owner-local-storage.test.mjs src/integration/tests/device-rejoin-handoff.test.mjs
       - name: Prepare small synthetic fixture on first real CPU runner
         run: |
           node scripts/qualify-github-free-recovery.mjs prepare "$RUNNER_TEMP/continuum-transport-fixture" > "$RUNNER_TEMP/source-readback.json"
