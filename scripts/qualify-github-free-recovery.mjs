@@ -19,12 +19,19 @@ import {join,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {openOwnerLocalStorage} from '../src/storage/owner-local-storage.mjs';
 import {CONTINUUM_AUTHORITY_REF} from '../src/authority/continuum-authority.mjs';
+import {createContinuumAccountBinding} from '../src/identity/continuum-account-binding.mjs';
 
 const schema='leeway.continuum.github-ci-recovery-drill.v1';
 const fixtureMarker='LEEWAY_PUBLIC_SYNTHETIC_FIXTURE_NO_USER_CONTENT_V1';
-const ownerId='public-synthetic-ci-owner';
-const sourceBodyId='ci-source-body';
-const targetBodyId='ci-target-body';
+// Synthetic source account is NOT real OIDC authentication, merely a deterministic fixture.
+const syntheticAccount=Object.freeze({identityVerified:true,
+ issuer:'https://identity-fixture.invalid',subject:'public-ci-fixture-owner'});
+const sourceBodyId='ci-android-body';
+const targetBodyId='ci-apple-body';
+const sourceBinding=createContinuumAccountBinding({account:syntheticAccount,bodyId:sourceBodyId});
+const targetBinding=createContinuumAccountBinding({account:syntheticAccount,bodyId:targetBodyId});
+if(sourceBinding.ownerId!==targetBinding.ownerId)throw Error('CONTINUUM_GITHUB_CI_OWNER_ID_MISMATCH');
+const ownerId=sourceBinding.ownerId;
 const maxFixtureBytes=128*1024;
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const fault=code=>{throw Object.assign(new Error(code),{code});};
@@ -47,6 +54,11 @@ function exactManifest(m){
  if(!m||m.schema!==schema||m.classification!=='PUBLIC_SYNTHETIC_FIXTURE_ONLY'||
    m.authorityRef!==CONTINUUM_AUTHORITY_REF||m.ownerId!==ownerId||
    m.sourceBodyId!==sourceBodyId||m.targetBodyId!==targetBodyId||
+   m.sourcePlatform!=='ANDROID'||m.targetPlatform!=='IOS'||
+   m.portablePayloadRole!=='OWNER_SCOPED_CONTINUUM_CONTENT_ONLY'||
+   m.sourceDigitalBrain!=='RETAIN_LOCAL_DEVICE_BOUND'||
+   m.targetDigitalBrain!=='MUST_CREATE_SEPARATE_NATIVE_BINDING'||
+   m.authenticationFixture!=='SYNTHETIC_OIDC_NOT_REAL_LOGIN'||
    m.fixtureMarker!==fixtureMarker||m.ownerRecordIssued!==false||
    m.executableServiceDeployed!==false||m.githubStorageRole!=='CI_TRANSIENT_ARTIFACT_NOT_CONTINUUM'||
    !Number.isSafeInteger(m.sizeBytes)||m.sizeBytes<1||m.sizeBytes>maxFixtureBytes||
@@ -75,6 +87,11 @@ export async function prepareSyntheticGithubRecovery(artifactDir){
  const manifest=exactManifest({
   schema,classification:'PUBLIC_SYNTHETIC_FIXTURE_ONLY',
   authorityRef:CONTINUUM_AUTHORITY_REF,ownerId,sourceBodyId,targetBodyId,
+  sourcePlatform:'ANDROID',targetPlatform:'IOS',
+  portablePayloadRole:'OWNER_SCOPED_CONTINUUM_CONTENT_ONLY',
+  sourceDigitalBrain:'RETAIN_LOCAL_DEVICE_BOUND',
+  targetDigitalBrain:'MUST_CREATE_SEPARATE_NATIVE_BINDING',
+  authenticationFixture:'SYNTHETIC_OIDC_NOT_REAL_LOGIN',
   fixtureMarker,ownerRecordIssued:false,executableServiceDeployed:false,
   githubStorageRole:'CI_TRANSIENT_ARTIFACT_NOT_CONTINUUM',
   contentSha256:result.contentSha256,sizeBytes:result.sizeBytes
@@ -84,7 +101,9 @@ export async function prepareSyntheticGithubRecovery(artifactDir){
  await writeFile(join(artifactDir,'manifest.json'),JSON.stringify(manifest,null,2)+'\n',
   {flag:'wx',mode:0o600});
  return Object.freeze({stage:'SOURCE_JOB_PREPARED',...allowedStatus,
-  fileSha256:result.contentSha256,sourceBytes:result.sizeBytes,ownerScope:ownerId});
+  fileSha256:result.contentSha256,sourceBytes:result.sizeBytes,ownerScope:ownerId,
+  sourcePlatform:'ANDROID',targetPlatform:'IOS',
+  nativeDeviceConnectionEstablished:false});
 }
 /** Restore in a separate, clean CI job to a *different body scope*, not an online service. */
 export async function verifySyntheticGithubRecovery(artifactDir){
@@ -107,7 +126,10 @@ export async function verifySyntheticGithubRecovery(artifactDir){
  });
  return Object.freeze({stage:'TARGET_JOB_RESTORED',...allowedStatus,
   fileSha256:result.sha256,targetBytes:result.sizeBytes,
-  separateBodyScopeVerified:true,foreignOwnerDenied:true});
+  separateBodyScopeVerified:true,foreignOwnerDenied:true,
+  sourcePlatform:'ANDROID',targetPlatform:'IOS',
+  nativeDeviceConnectionEstablished:false,
+  nativeAppleDigitalBrainCopied:false});
 }
 async function assertForeignScopeDenied(store,key){
  let denied=false;
