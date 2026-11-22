@@ -29,6 +29,7 @@ const make=overrides=>createContinuumConsumer({consumerId:'agent-lee',ownerId,bo
  transport,authorize:async()=>true,...overrides});
 test('single portable interface supports known consumers but no auto connection',()=>{
  assert(LEEWAY_CONTINUUM_CONSUMERS.includes('device-bridge'));
+ assert(LEEWAY_CONTINUUM_CONSUMERS.includes('crm-erp'));
  const x=make();assert.equal(x.descriptor.connected,'NOT_PROBED');
  assert.equal(x.descriptor.createsDatabase,false);
 });
@@ -51,4 +52,14 @@ test('write requires opt-in host and owner scoped source',async()=>{
 test('bad provider hash is rejected before a consumer can use content',async()=>{
  const c=make({transport:{...transport,getContent:async()=>({bytes,record:{contentSha256:'0'.repeat(64)}})}});
  await assert.rejects(c.getContent('record-a',context),/BAD_READBACK/);
+});
+
+test('CRM/ERP is a bounded consumer, not an automatically connected database or writer',async()=>{
+ const crm=make({consumerId:'crm-erp'});
+ assert.equal(crm.descriptor.consumerId,'crm-erp');
+ assert.equal(crm.descriptor.connected,'NOT_PROBED');
+ assert.equal(crm.descriptor.createsDatabase,false);
+ assert.equal(crm.descriptor.writeEnabled,false);
+ await assert.rejects(crm.ingestFile({bytes,requestId:'request-crm',source:{bodyId}},context),/WRITE_DISABLED/);
+ await assert.rejects(crm.status({...context,bodyId:'other'}),/OWNER_DENIED/);
 });
