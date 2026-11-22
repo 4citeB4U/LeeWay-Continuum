@@ -1,0 +1,80 @@
+# LEEWAY HEADER — DO NOT REMOVE
+# REGION: LEEWAY.CONTINUUM.GITHUB_FREE_RECOVERY.CI
+# TAG: LEEWAY.CONTINUUM.FREE_GITHUB.CPU.RECOVERY.QUALIFICATION.V1
+# 5WH:
+# WHAT = Test Continuum fixture handoff between two separate GitHub-hosted CPU runner jobs.
+# WHY = Validate repeatable, free-compatible development recovery without making Actions an online service.
+# WHO = Creator / original Continuum source owner; outside supporting contributor, not Agent Lee.
+# WHERE = .github/workflows/github-free-recovery-qualification.yml.
+# WHEN = 2026-11-21.
+# HOW = Original owner-local-storage source, tiny synthetic artifact, integrity and scope tests.
+# LICENSE = MIT.
+# AUTHORITY = SOURCE_CI_ONLY; NO REAL DEVICE FILES, CONTINUUM PRODUCTION DATA OR APPLICATION HOSTING.
+name: Continuum GitHub free CPU recovery qualification
+on:
+  pull_request:
+    paths:
+      - 'scripts/qualify-github-free-recovery.mjs'
+      - 'tests/github-free-recovery-ci.test.mjs'
+      - '.github/workflows/github-free-recovery-qualification.yml'
+      - 'docs/research/GITHUB-FREE-CONTINUUM-RECOVERY-V1.md'
+      - 'src/storage/owner-local-storage.mjs'
+      - 'src/integration/device-rejoin-handoff.mjs'
+      - 'src/integration/tests/device-rejoin-handoff.test.mjs'
+      - 'compat/runtime-fabric/continuum-routes.mjs'
+      - 'tests/continuum-device-rejoin-route.test.mjs'
+      - 'package.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: continuum-free-recovery-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source-runner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Original Continuum source unit and negative tests
+        run: |
+          node --check scripts/qualify-github-free-recovery.mjs
+          node --check src/integration/device-rejoin-handoff.mjs
+          node --check compat/runtime-fabric/continuum-routes.mjs
+          node --test tests/github-free-recovery-ci.test.mjs src/storage/tests/owner-local-storage.test.mjs src/integration/tests/device-rejoin-handoff.test.mjs tests/continuum-device-rejoin-route.test.mjs
+      - name: Prepare small synthetic fixture on first real CPU runner
+        run: |
+          node scripts/qualify-github-free-recovery.mjs prepare "$RUNNER_TEMP/continuum-transport-fixture" > "$RUNNER_TEMP/source-readback.json"
+          cat "$RUNNER_TEMP/source-readback.json"
+          sha256sum "$RUNNER_TEMP/continuum-transport-fixture/fixture.bin"
+      - name: Retain only synthetic cross-job test bytes for one day
+        uses: actions/upload-artifact@v4
+        with:
+          name: continuum-public-synthetic-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/continuum-transport-fixture/fixture.bin
+            ${{ runner.temp }}/continuum-transport-fixture/manifest.json
+          if-no-files-found: error
+          retention-days: 1
+  target-runner:
+    needs: source-runner
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Retrieve only same-run synthetic test artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: continuum-public-synthetic-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/continuum-transport-fixture
+      - name: Verify exact bytes on second real CPU and different body scope
+        run: |
+          node scripts/qualify-github-free-recovery.mjs restore "$RUNNER_TEMP/continuum-transport-fixture" > "$RUNNER_TEMP/target-readback.json"
+          cat "$RUNNER_TEMP/target-readback.json"
+          sha256sum "$RUNNER_TEMP/continuum-transport-fixture/fixture.bin"
