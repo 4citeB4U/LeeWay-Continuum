@@ -19,7 +19,7 @@ LICENSE: MIT for new files; original module licenses and vendor notices are pres
 
 **STATUS: PUBLISHED SOURCE REPOSITORY. LIVE PRODUCTION INTEGRATION NOT YET QUALIFIED.**
 
-The GitHub repository is currently **PUBLIC** by the repository owner's choice. It contains source and documentation only; never publish live databases, credentials, owner records, Pocket ID identity stores, or encrypted archives that carry private identity data without an explicit access review.
+The GitHub repository is currently **PUBLIC** by the repository owner's choice. It contains source and documentation only; never publish live databases, credentials, owner records, retired identity provider stores, or encrypted archives that carry private identity data without an explicit access review.
 
 The original owner storage reported at 127.0.0.1:8890 remains unchanged. No live records,
 identity keys, Receipt Ledger, Learning Ledger, or Veritas authorities have been moved.
@@ -67,7 +67,7 @@ No credentials, plaintext backups or private source content belong in GitHub.
 - src/integration/canonical-host-binding.mjs — same-instance provider/owner source integration
 - src/integration/ecosystem-consumer.mjs — scoped clients for the remaining LeeWay services
 - src/identity/continuum-account-binding.mjs — verified-account portable custody and reconnect contract
-- compat/device-bridge/ — original Device Bridge binder and Pocket ID snapshot adapter
+- compat/device-bridge/ — original Device Bridge binder; retired identity snapshot adapter removed
 - src/capacity/continuum-capacity-plan.mjs — measured pressure, proposal only
 - config/storage-topology.candidate.json — truthful unbound and optional states
 - docs/SOURCE-PROVENANCE.md — original Git blob identity inventory
