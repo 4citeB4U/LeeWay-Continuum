@@ -16,6 +16,44 @@ const LOCAL=new Set(['127.0.0.1','::1','::ffff:127.0.0.1']);
 const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Cross-Origin-Resource-Policy':'same-origin','Referrer-Policy':'same-origin'};
 const json=(res,status,value)=>{res.writeHead(status,{...headers,'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(value));};
 const machineCode=e=>/^[A-Z0-9_]+$/.test(e?.code||e?.message||'')?(e.code||e.message):'CONTINUUM_PROVIDER_FAILURE';
+
+/*
+ * LeeWay isolated repair candidate.
+ * Preserve download names without granting file access.
+ */
+function continuumDownloadDisposition(record) {
+  const supplied =
+    typeof record?.fileName === 'string'
+      ? record.fileName
+      : typeof record?.title === 'string'
+        ? record.title
+        : 'continuum-record';
+
+  let name = supplied
+    .replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, '_')
+    .replace(/[\\/]/g, '_')
+    .trim();
+
+  name = Array.from(name).slice(0, 120).join('');
+  name = name.replace(/[\ud800-\udfff]/gu, '_');
+
+  if (!name || name === '.' || name === '..') {
+    name = 'continuum-record';
+  }
+
+  const ascii = name
+    .replace(/[^\x20-\x7e]/g, '_')
+    .replace(/["\\/:*?<>|]/g, '_');
+
+  const encoded = encodeURIComponent(name)
+    .replace(/['()*]/g, c =>
+      '%' + c.charCodeAt(0).toString(16).toUpperCase()
+    );
+
+  return 'attachment; filename="' + ascii +
+    '"; filename*=UTF-8' + "''" + encoded;
+}
+
 export function isLocalContinuumRequest(req){
   const host=String(req.headers.host||''),origin='http://'+host;
   return LOCAL.has(req.socket.remoteAddress)&&/^(127\.0\.0\.1|localhost):[0-9]+$/.test(host)&&(!req.headers.origin||req.headers.origin===origin)&&req.headers['sec-fetch-site']!=='cross-site';
@@ -42,7 +80,7 @@ export function createContinuumRoutes({resolveProvider,uiDirectory,uiPrefix='/co
         else if(route==='record')result=await provider.inspect(u.searchParams.get('recordId'),context);
         else if(route==='receipt'){if(typeof provider.getReceipt!=='function')throw Error('CONTINUUM_RECEIPT_PROVIDER_UNBOUND');result=await provider.getReceipt(u.searchParams.get('receiptId'),context);}
         else if(route==='search')result=await provider.search(options,context);
-        else if(route==='content'){const content=await provider.getContent(u.searchParams.get('recordId'),context);res.writeHead(200,{...headers,'Content-Type':content.record.mimeType||'application/octet-stream','Content-Length':String(content.bytes.length),'X-Continuum-Content-SHA256':content.record.contentSha256||'','Content-Disposition':'attachment; filename="continuum-record"','Content-Security-Policy':"sandbox; default-src 'none'"});res.end(content.bytes);return true;}
+        else if(route==='content'){const content=await provider.getContent(u.searchParams.get('recordId'),context);res.writeHead(200,{...headers,'Content-Type':content.record.mimeType||'application/octet-stream','Content-Length':String(content.bytes.length),'X-Continuum-Content-SHA256':content.record.contentSha256||'','Content-Disposition':continuumDownloadDisposition(content.record),'Content-Security-Policy':"sandbox; default-src 'none'"});res.end(content.bytes);return true;}
         else{json(res,404,{ok:false,error:'CONTINUUM_OPERATION_NOT_FOUND'});return true;}
       }else if(req.method==='POST'&&route==='import'){
         if(req.headers.origin!==origin||req.headers['x-continuum-request']!=='owner-import'||req.headers['content-type']!=='application/octet-stream'){json(res,403,{ok:false,error:'CONTINUUM_OWNER_IMPORT_REQUIRED'});return true;}
